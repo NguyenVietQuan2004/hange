@@ -44,3 +44,4 @@ jobs:
             echo "${{secrets.ENV_PRODUCTION}}" > .env
             npm i --force
             npm run build
+            npm start
