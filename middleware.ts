@@ -115,14 +115,14 @@ const refreshTokenMiddleware = async (request: NextRequest, pathname: string) =>
       httpOnly: true,
       path: "/",
       expires: new Date(expAccessToken * 1000),
-      secure: process.env.NODE_ENV === "production",
+      // secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
     response.cookies.set("refreshToken", newRefreshToken, {
       httpOnly: true,
       path: "/",
       expires: new Date(expRefreshToken * 1000),
-      secure: process.env.NODE_ENV === "production",
+      // secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
     return response;

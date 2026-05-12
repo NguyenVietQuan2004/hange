@@ -35,7 +35,7 @@ export const POST = async (req: Request) => {
     httpOnly: true,
     path: "/",
     expires: new Date(expAccessToken * 1000),
-    secure: process.env.NODE_ENV === "production",
+    // secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
   });
 
@@ -43,7 +43,7 @@ export const POST = async (req: Request) => {
     httpOnly: true,
     path: "/",
     expires: new Date(expRefreshToken * 1000),
-    secure: process.env.NODE_ENV === "production",
+    // secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
   });
 
