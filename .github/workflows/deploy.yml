@@ -36,6 +36,8 @@ jobs:
           password: ${{ secrets.PASSWORD_PRODUCTION }}
           port: ${{ secrets.PORT_PRODUCTION }}
           script: |
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
             cd ~/.production/hange
             git fetch --all
             git reset --hard origin/main
