@@ -72,7 +72,7 @@ jobs:
 
             # đi tới folder production
             cd ~/.pro-images
-
+            docker compose down --remove-orphans frontend
             # pull image mới từ Docker Hub
             docker pull nguyenquan303/hange-frontend:latest
 
