@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: vps-hange
+
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -22,6 +24,7 @@ jobs:
       - run: npm run build
   deploy:
     runs-on: ubuntu-latest
+    environment: vps-hange
     needs: build
     steps:
       - name: Executing remote ssh commands using password
