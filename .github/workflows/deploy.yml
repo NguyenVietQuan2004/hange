@@ -74,7 +74,9 @@ jobs:
             cd ~/.pro-images
 
             # pull image mới từ Docker Hub
-            docker pull ${{ secrets.DOCKER_USERNAME }}/hange-frontend:latest
+            docker pull nguyenquan303/hange-frontend:latest
 
             # restart frontend container
             docker-compose up -d frontend
+
+# docker pull ${{ secrets.DOCKER_USERNAME }}/hange-frontend:latest
