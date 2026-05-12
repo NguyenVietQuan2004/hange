@@ -75,6 +75,11 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  if (refreshToken && !accessToken) {
+    console.log(">>> Case 5: Access token hết hạn cần refresh ngay lập tức");
+    return await refreshTokenMiddleware(request, pathname);
+  }
+
   return NextResponse.next();
 }
 
