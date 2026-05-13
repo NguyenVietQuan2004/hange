@@ -8,7 +8,7 @@ export default function HomePage() {
     <HeaderLayout>
       <FooterLayout>
         <div className=" flex  items-center justify-center px-4 bg-background text-foreground transition-colors">
-          <div className="w-full max-w-2xl"> dau cat moi update</div>
+          <div className="w-full max-w-2xl"> dau cat moi update kkkk</div>
         </div>
       </FooterLayout>
     </HeaderLayout>
