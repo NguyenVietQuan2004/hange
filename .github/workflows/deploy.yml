@@ -77,5 +77,6 @@ jobs:
 
             # restart frontend container
             docker compose up -d frontend
+            docker image prune -f
 
 # docker pull ${{ secrets.DOCKER_USERNAME }}/hange-frontend:latest
