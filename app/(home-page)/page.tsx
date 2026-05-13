@@ -8,7 +8,7 @@ export default function HomePage() {
     <HeaderLayout>
       <FooterLayout>
         <div className=" flex  items-center justify-center px-4 bg-background text-foreground transition-colors">
-          <div className="w-full max-w-2xl"> chiu toi la con cun ngoan nhat the gioi</div>
+          <div className="w-full max-w-2xl"> dau cat moi</div>
         </div>
       </FooterLayout>
     </HeaderLayout>
