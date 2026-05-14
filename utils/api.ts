@@ -37,7 +37,16 @@ export const API_URL = {
 
   PERMISSION: {
     BASE: api("/permissions"),
-    GET_ALL: api("/permissions"),
+    // GET_ALL: api("/permissions?page=1&size=5&sort=name,desc&keyword=u"), // cac cai con lai la exact
+    GET_ALL: api("/permissions"), // cac cai con lai la exact
+    //     GET /api/v1/permissions?
+    // keyword=user&
+    // module=AUTH&
+    // method=GET&
+    // apiPath=
+    // page=0&
+    // size=5&
+    // sort=name,asc
     CREATE: api("/permissions"),
     UPDATE: (id: number) => api(`/permissions/${id}`),
     DELETE: (id: number) => api(`/permissions/${id}`),

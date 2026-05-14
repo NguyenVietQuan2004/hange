@@ -191,3 +191,11 @@ button {
 html body[data-scroll-locked] {
   margin-right: 0 !important;
 }
+
+button,
+image {
+  user-select: none !important;
+}
+button {
+  cursor: pointer;
+}

@@ -12,9 +12,18 @@ export default function Header() {
   return (
     <header className="w-full px-6 py-4 border-b border-border bg-background text-foreground flex justify-between items-center">
       {/* LOGO */}
-      <Link href="/" className="font-bold text-foreground">
-        My App
-      </Link>
+      <div className="flex items-center gap-1">
+        <Image
+          src={"/image/logo.png"}
+          alt="avatar"
+          width={100}
+          height={100}
+          className="rounded-full  w-8 h-8 select-none "
+        />
+        <Link href="/" className="font-bold text-2xl text-foreground">
+          Hange
+        </Link>
+      </div>
 
       <div className="flex items-center gap-3">
         {loading ? (
@@ -25,7 +34,7 @@ export default function Header() {
             alt="avatar"
             width={100}
             height={100}
-            className="rounded-full  w-8 h-8 border border-border"
+            className="rounded-full  w-8 h-8 select-none border border-border"
           />
         ) : user ? (
           <div className="relative">

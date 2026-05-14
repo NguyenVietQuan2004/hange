@@ -162,7 +162,7 @@ export default function RoleTab() {
         <h2 className="text-2xl font-bold">Role Management</h2>
         <button
           onClick={openCreateModal}
-          className="flex mt-2 md:mt-0 items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl hover:opacity-90 transition font-medium"
+          className="flex mt-2 md:mt-0 items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg hover:opacity-90 transition font-medium"
         >
           <Plus className="w-5 h-5" />
           Create New Role
@@ -175,7 +175,7 @@ export default function RoleTab() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {roles.map((role) => (
-            <div key={role.id} className="border border-border rounded-2xl p-5 bg-card hover:shadow-md transition-all">
+            <div key={role.id} className="border border-border rounded-xl p-5 bg-card hover:shadow-md transition-all">
               <div>
                 <h3 className="font-semibold    ">{role.name}</h3>
                 {role.description && <p className="   text-muted-foreground mt-1 line-clamp-2">{role.description}</p>}

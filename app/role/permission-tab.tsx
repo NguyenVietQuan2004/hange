@@ -114,7 +114,7 @@ export default function PermissionTab() {
         <h2 className="text-2xl font-bold">Permission Management</h2>
         <button
           onClick={openCreateModal}
-          className="flex mt-2 md:mt-0 items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl hover:opacity-90 transition font-medium"
+          className="flex mt-2 md:mt-0 items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg hover:opacity-90 transition font-medium"
         >
           <Plus className="w-5 h-5" />
           Create New Permission
@@ -129,11 +129,11 @@ export default function PermissionTab() {
           {Object.entries(grouped).map(([module, items]) => {
             const isExpanded = expandedModules.has(module);
             return (
-              <div key={module} className="border border-border rounded-xl overflow-hidden bg-card">
+              <div key={module} className="border border-border rounded-lg overflow-hidden bg-card">
                 {/* Header */}
                 <button
                   onClick={() => toggleModule(module)}
-                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-accent transition-colors"
+                  className="w-full px-6 py-3 flex items-center justify-between hover:bg-accent transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     {isExpanded ? (
