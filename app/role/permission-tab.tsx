@@ -109,7 +109,7 @@ export default function PermissionTab() {
   };
 
   return (
-    <div className="bg-background text-xs! text-foreground px-2 md:p-6 rounded-xl">
+    <div className="bg-background text-xs! text-foreground px-2 md:p-0 rounded-xl">
       <div className="flex md:justify-between md:items-center items-start flex-col md:flex-row mb-6">
         <h2 className="text-2xl font-bold">Permission Management</h2>
         <button
@@ -154,7 +154,7 @@ export default function PermissionTab() {
                     {items.map((p, index) => (
                       <div
                         key={p.id}
-                        className="flex overflow-hidden flex-col md:flex-row justify-between items-start gap-1 md:items-center border border-border rounded-lg p-4 hover:bg-accent/50 transition"
+                        className="flex overflow-hidden flex-col md:flex-row justify-between items-start gap-1 md:items-center border border-border rounded-lg px-4 py-3 hover:bg-accent/50 transition"
                       >
                         <div>
                           <div className="font-medium">

@@ -322,7 +322,9 @@ export default function MeClientPage() {
                 <div className="min-w-0">
                   <h2 className="font-semibold truncate">{user.fullName}</h2>
 
-                  <p className="text-muted-foreground cursor-pointer hover:text-foreground transition">View profile</p>
+                  <p className="text-muted-foreground select-none cursor-pointer hover:text-foreground transition">
+                    View profile
+                  </p>
                 </div>
               </div>
 
@@ -518,7 +520,7 @@ function ProfileTab({ user, setUser }: { user: any; setUser: any }) {
         {!editMode && (
           <button
             onClick={() => setEditMode(true)}
-            className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-primary text-primary-foreground font-medium hover:opacity-90 transition"
+            className="flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition"
           >
             <Pencil size={16} />
             Edit Profile

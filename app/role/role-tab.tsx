@@ -157,7 +157,7 @@ export default function RoleTab() {
   };
 
   return (
-    <div className="bg-background text-foreground text-xs! px-2 md:p-6 rounded-xl">
+    <div className="bg-background text-foreground text-xs! px-2 md:p-0 rounded-xl">
       <div className="flex md:justify-between md:items-center items-start flex-col md:flex-row mb-6">
         <h2 className="text-2xl font-bold">Role Management</h2>
         <button

@@ -36,6 +36,7 @@ export type ForgotPasswordRequest = {
 export type ResetPasswordRequest = {
   token: string;
   newPassword: string;
+  confirmPassword: string;
 };
 
 export type VerifyEmailRequest = {
@@ -46,6 +47,7 @@ export type ChangePasswordRequest = {
   oldPassword: string;
   refreshToken: string;
   newPassword: string;
+  confirmNewPassword: string;
   option?: string;
 };
 

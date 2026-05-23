@@ -28,7 +28,7 @@ export interface UserDTO {
   failedLoginCount: number;
 
   lockedUntil: string | null;
-
+  nextBookingAllowedAt: string | null;
   passwordChangedAt: string | null;
 
   tokenVersion: number;

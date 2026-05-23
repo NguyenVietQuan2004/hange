@@ -90,14 +90,14 @@ const refreshTokenMiddleware = async (request: NextRequest, pathname: string) =>
     const res = await fetch(API_URL.AUTH.REFRESH, {
       method: "POST",
       headers: {
-        "Content-Type": "text/plain",
+        "Content-Type": "application/json",
       },
-      body: refreshToken,
+      body: JSON.stringify({ refreshToken }),
     });
     const json = await res.json();
-
+    console.log("Case >>> refresh - token at middleware", json);
     if (!res.ok) {
-      throw new Error("Refresh token failed");
+      throw new Error("Refresh token failed" + json);
     }
 
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } = json.data;
@@ -132,7 +132,7 @@ const refreshTokenMiddleware = async (request: NextRequest, pathname: string) =>
     });
     return response;
   } catch (error) {
-    console.log(error);
+    console.log("error", error);
     return unauthorizedResponse(request);
   }
 };

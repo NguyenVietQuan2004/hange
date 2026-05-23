@@ -193,7 +193,7 @@ html body[data-scroll-locked] {
 }
 
 button,
-image {
+img {
   user-select: none !important;
 }
 button {

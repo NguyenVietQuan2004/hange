@@ -3,21 +3,21 @@
 import { toast } from "sonner";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ERROR_CODE } from "@/const/error-code";
 import { authService } from "@/services/auth.service";
 import { Eye, EyeOff, Lock, CheckCircle2 } from "lucide-react";
-
+import { CHANGE_PASSWORD_ERROR_MESSAGE, CHANGE_PASSWORD_FATAL_ERRORS } from "@/const/change-password-error";
+import { useAuth } from "@/hook/auth-provider";
 export default function ChangePasswordComponent() {
   const router = useRouter();
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const [logoutLoading, setLogoutLoading] = useState(false);
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
+  const { setUser } = useAuth();
   const [option, setOption] = useState<"KEEP_ALL" | "KEEP_CURRENT">("KEEP_ALL");
 
   const [loading, setLoading] = useState(false);
@@ -35,9 +35,32 @@ export default function ChangePasswordComponent() {
 
   const passwordStrength = Object.values(passwordChecks).filter(Boolean).length;
 
+  const logout = async () => {
+    if (logoutLoading) return;
+
+    setLogoutLoading(true);
+
+    try {
+      const data = await authService.getTokens();
+      const { accessToken, refreshToken } = data;
+
+      if (refreshToken) {
+        await authService.logout({ accessToken, refreshToken });
+      }
+    } catch (err) {
+      // console.log("Logout error:", err);
+    } finally {
+      await authService.logoutNextServer();
+      setUser(null);
+      router.push("/login");
+      setLogoutLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // client validation
     if (newPassword !== confirmPassword) {
       toast.error("New password does not match");
       return;
@@ -54,18 +77,36 @@ export default function ChangePasswordComponent() {
         oldPassword,
         refreshToken,
         newPassword,
+        confirmNewPassword: confirmPassword,
         option,
       });
 
       toast.success("Password changed successfully");
 
-      router.push("/login");
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
     } catch (err: any) {
-      if (err.message === ERROR_CODE.WRONG_PASSWORD) {
-        toast.error("Current password is incorrect");
-      } else {
-        toast.error(err.message);
+      /**
+       * Backend response example:
+       * {
+       *   code: "AUTH_INVALID_CREDENTIALS",
+       *   message: "Current password incorrect"
+       * }
+       */
+
+      const errorCode = err?.message || err?.response?.data?.code || err?.code;
+
+      const message = CHANGE_PASSWORD_ERROR_MESSAGE[errorCode] || "Something went wrong.";
+
+      // fatal error
+      if (CHANGE_PASSWORD_FATAL_ERRORS.includes(errorCode)) {
+        toast.error(message);
+        await logout();
+        return;
       }
+
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -173,7 +214,7 @@ export default function ChangePasswordComponent() {
 
           {/* REQUIREMENTS */}
           <div className="mt-6">
-            <p className="text-muted-foreground mb-4">Password should contain:</p>
+            <p className="text-muted-foreground mb-4">Password must contain:</p>
 
             <div className="space-y-4">
               <Requirement valid={passwordChecks.length} text="8 or more characters" />
