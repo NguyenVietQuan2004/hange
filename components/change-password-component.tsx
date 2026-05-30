@@ -3,9 +3,9 @@
 import { toast } from "sonner";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { authService } from "@/services/auth.service";
+import { authService } from "@/services/auth/auth.service";
 import { Eye, EyeOff, Lock, CheckCircle2 } from "lucide-react";
-import { CHANGE_PASSWORD_ERROR_MESSAGE, CHANGE_PASSWORD_FATAL_ERRORS } from "@/const/change-password-error";
+import { CHANGE_PASSWORD_ERROR_MESSAGE, CHANGE_PASSWORD_FATAL_ERRORS } from "@/const/auth/change-password-error";
 import { useAuth } from "@/hook/auth-provider";
 export default function ChangePasswordComponent() {
   const router = useRouter();

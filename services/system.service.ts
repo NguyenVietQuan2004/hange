@@ -1,5 +1,5 @@
 import { api } from "@/services/http-service-client";
-import { UploadRequest, UploadResponse } from "@/types/auth-type";
+import { UploadRequest, UploadResponse } from "@/types/auth/auth-type";
 import { API_URL } from "@/utils/api";
 
 export const systemService = {

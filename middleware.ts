@@ -159,10 +159,10 @@ const isAdmin = (payload: JWTPayload | null) => {
   if (!payload) return false;
   const roles = payload.roles || payload.role;
   if (Array.isArray(roles)) {
-    return roles.includes("ROLE_ADMIN");
+    return roles.includes("ADMIN");
   }
   if (typeof roles === "string") {
-    return roles.split(" ").includes("ROLE_ADMIN");
+    return roles.split(" ").includes("ADMIN");
   }
 
   return false;

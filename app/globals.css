@@ -111,9 +111,11 @@ body {
 
 .dark {
   /* --background: oklch(0.145 0 0);#0d1117 */
-  --background: #0d1117;
+  /* --background: #0d1117;#010409 */
+  --background: #010409;
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  /* --card: oklch(0.205 0 0); */
+  --card: #0d1117;
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
@@ -123,7 +125,8 @@ body {
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --accent: #656c7633;
+  /* --accent: oklch(0.269 0 0);#656c7633 */
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
@@ -191,7 +194,6 @@ button {
 html body[data-scroll-locked] {
   margin-right: 0 !important;
 }
-
 button,
 img {
   user-select: none !important;
@@ -199,3 +201,5 @@ img {
 button {
   cursor: pointer;
 }
+
+/* tạo list - tối  ưu - thêm permission - gắn quyền */

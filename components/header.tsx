@@ -49,7 +49,7 @@ export default function Header() {
             </div>
             {/* DROPDOWN */}
             {open && (
-              <div className="absolute right-0 mt-2 w-40 bg-popover text-popover-foreground border border-border rounded-lg shadow-md z-50 overflow-hidden">
+              <div className="absolute right-0 mt-2 w-44 bg-popover text-popover-foreground border border-border rounded-lg shadow-md z-50 overflow-hidden">
                 <Link
                   href={"/me"}
                   className="px-3 w-full block hover:bg-muted py-2 text-sm border-b border-border text-muted-foreground"
@@ -61,7 +61,16 @@ export default function Header() {
                     href={"/role"}
                     className="px-3 w-full block hover:bg-muted py-2 text-sm border-b border-border text-muted-foreground"
                   >
-                    Admin
+                    RBAC Management
+                  </Link>
+                )}
+
+                {user.role?.includes("ADMIN") && (
+                  <Link
+                    href={"/categories"}
+                    className="px-3 w-full block hover:bg-muted py-2 text-sm border-b border-border text-muted-foreground"
+                  >
+                    Booking Management
                   </Link>
                 )}
                 <button

@@ -59,4 +59,88 @@ export const API_URL = {
     UPDATE: (id: number) => api(`/roles/${id}`),
     DELETE: (id: number) => api(`/roles/${id}`),
   },
+
+  CATEGORY: {
+    BASE: api("/categories"),
+
+    GET_ALL: api("/categories"),
+    GET_BY_ID: (id: number) => api(`/categories/${id}`),
+    GET_BY_SLUG: (slug: string) => api(`/categories/slug/${slug}`),
+
+    CREATE: api("/categories"),
+    UPDATE: (id: number) => api(`/categories/${id}`),
+    REPLACE: (id: number) => api(`/categories/${id}`),
+
+    DELETE: (id: number) => api(`/categories/${id}`),
+  },
+
+  SERVICE: {
+    BASE: api("/services"),
+
+    GET_ALL: api("/services"),
+    GET_BY_ID: (id: number) => api(`/services/${id}`),
+    GET_BY_SLUG: (slug: string) => api(`/services/slug/${slug}`),
+
+    CREATE: api("/services"),
+    UPDATE: (id: number) => api(`/services/${id}`),
+    DELETE: (id: number) => api(`/services/${id}`),
+  },
+
+  LOCATION: {
+    BASE: api("/locations"),
+
+    GET_ALL: api("/locations"),
+    GET_BY_ID: (id: number) => api(`/locations/${id}`),
+    GET_BY_SLUG: (slug: string) => api(`/locations/slug/${slug}`),
+
+    CREATE: api("/locations"),
+    UPDATE: (id: number) => api(`/locations/${id}`),
+    DELETE: (id: number) => api(`/locations/${id}`),
+  },
+
+  NOTIFICATION: {
+    BASE: api("/notifications"),
+
+    GET_ALL: api("/notifications"),
+
+    GET_BY_USER: (userId: number) => api(`/notifications/user/${userId}`),
+
+    CREATE: api("/notifications"),
+
+    MARK_READ: (id: number) => api(`/notifications/${id}/read`),
+
+    MARK_ALL_READ: (userId: number) => api(`/notifications/user/${userId}/read-all`),
+
+    DELETE: (id: number) => api(`/notifications/${id}`),
+  },
+
+  BOOKING: {
+    BASE: api("/bookings"),
+
+    CREATE: api("/bookings"),
+
+    GET_ALL: api("/bookings"),
+    GET_BY_ID: (id: number) => api(`/bookings/${id}`),
+
+    MY_BOOKINGS: api("/bookings/me"),
+
+    CONFIRM: (id: number) => api(`/bookings/${id}/confirm`),
+    REJECT: (id: number) => api(`/bookings/${id}/reject`),
+    CANCEL: (id: number) => api(`/bookings/${id}/cancel`),
+  },
+
+  SERVICE_SLOT: {
+    BASE: api("/service-slots"),
+
+    GET_ALL: api("/service-slots"),
+    GET_BY_ID: (id: number) => api(`/service-slots/${id}`),
+
+    GET_BY_SERVICE: (serviceId: number) => api(`/service-slots/service/${serviceId}`),
+
+    CREATE: api("/service-slots"),
+    BULK_CREATE: api("/service-slots/bulk"),
+
+    UPDATE: (id: number) => api(`/service-slots/${id}`),
+    DELETE: (id: number) => api(`/service-slots/${id}`),
+  },
 };
