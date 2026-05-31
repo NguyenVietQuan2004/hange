@@ -2,7 +2,6 @@
 import { format } from "date-fns";
 
 import {
-  // ... các icon cũ của bạn
   Calendar as CalendarIconLucide,
   MapPinIcon,
   Clock,
