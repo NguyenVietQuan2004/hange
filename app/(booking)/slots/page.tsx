@@ -1,289 +1,579 @@
 // "use client";
-
 // import { useEffect, useState } from "react";
 // import Link from "next/link";
-// import { Edit, Trash2, Eye, Plus } from "lucide-react";
+// import { format } from "date-fns";
+// import { vi } from "date-fns/locale";
+// import {
+//   CalendarIcon,
+//   Search,
+//   Loader2,
+//   CalendarDays,
+//   LayersIcon,
+//   MapPinIcon,
+//   ClockIcon,
+//   UsersIcon,
+//   Plus,
+// } from "lucide-react";
+// import { cn } from "@/lib/utils";
+// import { Button } from "@/components/ui/button";
+// import { Calendar } from "@/components/ui/calendar";
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+// import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
+// import {
+//   AlertDialog,
+//   AlertDialogAction,
+//   AlertDialogCancel,
+//   AlertDialogContent,
+//   AlertDialogDescription,
+//   AlertDialogFooter,
+//   AlertDialogHeader,
+//   AlertDialogTitle,
+// } from "@/components/ui/alert-dialog";
+// import {
+//   Pagination,
+//   PaginationContent,
+//   PaginationEllipsis,
+//   PaginationItem,
+//   PaginationLink,
+//   PaginationNext,
+//   PaginationPrevious,
+// } from "@/components/ui/pagination";
+// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Badge } from "@/components/ui/badge";
 // import { serviceSlotService } from "@/services/booking/service-slot.service";
 // import { serviceService } from "@/services/booking/service.service";
-
+// import { locationService } from "@/services/booking/location.service";
 // import { ServiceSlotDTO } from "@/types/booking/service-slot-type";
 // import { ServiceDTO } from "@/types/booking/service-type";
+// import { LocationDTO } from "@/types/booking/location-type";
 
-// const ITEMS_PER_PAGE = 8;
+// const ITEMS_PER_PAGE = 10;
 
 // export default function ServiceSlotsPage() {
-//   const [slots, setSlots] = useState<ServiceSlotDTO[]>([]);
+//   // Data states
 //   const [services, setServices] = useState<ServiceDTO[]>([]);
+//   const [locations, setLocations] = useState<LocationDTO[]>([]);
+//   const [slots, setSlots] = useState<ServiceSlotDTO[]>([]);
 
-//   const [loading, setLoading] = useState(true);
+//   // UI states
+//   const [loading, setLoading] = useState(false);
+//   const [loadingServices, setLoadingServices] = useState(true);
+//   const [hasSearched, setHasSearched] = useState(false);
+//   const [isLoading, setIsLoading] = useState(false);
+
+//   // Filters
+//   const [selectedServiceId, setSelectedServiceId] = useState<string>("");
+//   const [selectedLocationId, setSelectedLocationId] = useState<string>("");
+//   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+//   // Pagination
 //   const [currentPage, setCurrentPage] = useState(1);
 
-//   const [filterServiceId, setFilterServiceId] = useState<string>("");
-//   const [filterDate, setFilterDate] = useState("");
+//   // Dialogs
+//   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+//   const [deletingSlotId, setDeletingSlotId] = useState<number | null>(null);
 
+//   // Load Services
 //   useEffect(() => {
-//     fetchData();
-//     serviceService.getAll().then(setServices);
+//     serviceService.getAll().then((data) => {
+//       setServices(data);
+//       setLoadingServices(false);
+//     });
 //   }, []);
 
+//   // Load Locations when Service changes
 //   useEffect(() => {
-//     setCurrentPage(1);
-//   }, [filterServiceId, filterDate]);
+//     if (!selectedServiceId) {
+//       setLocations([]);
+//       setSelectedLocationId("");
+//       return;
+//     }
 
-//   const fetchData = async () => {
+//     const loadLocations = async () => {
+//       const allSlots = await serviceSlotService.getAll();
+//       const locationIds = allSlots
+//         .filter((s) => s.serviceId === Number(selectedServiceId))
+//         .map((s) => s.locationId)
+//         .filter((v, i, a) => a.indexOf(v) === i);
+
+//       const allLocations = await locationService.getAll();
+//       setLocations(allLocations.filter((l) => locationIds.includes(l.id)));
+//     };
+
+//     loadLocations();
+//   }, [selectedServiceId]);
+
+//   const handleSearch = async () => {
+//     if (!selectedServiceId || !selectedLocationId) {
+//       alert("Vui lòng chọn Dịch vụ và Trung tâm");
+//       return;
+//     }
+
+//     setIsLoading(true);
+//     setHasSearched(true);
+//     setCurrentPage(1);
+
 //     try {
-//       setLoading(true);
-//       const res = await serviceSlotService.getAll();
-//       setSlots(res);
+//       const allSlotsData = await serviceSlotService.getAll();
+//       let filtered = allSlotsData.filter(
+//         (slot) => slot.serviceId === Number(selectedServiceId) && slot.locationId === Number(selectedLocationId),
+//       );
+
+//       if (selectedDate) {
+//         const dateStr = format(selectedDate, "yyyy-MM-dd");
+
+//         filtered = filtered.filter((slot) => slot.slotDate === dateStr);
+//       }
+
+//       setSlots(filtered);
 //     } finally {
-//       setLoading(false);
+//       setIsLoading(false);
 //     }
 //   };
 
 //   const handleDelete = async (id: number) => {
-//     if (!confirm("Bạn có chắc muốn xóa slot này?")) return;
-//     await serviceSlotService.remove(id);
-//     fetchData();
+//     setDeletingSlotId(id);
+//     setDeleteDialogOpen(true);
 //   };
 
-//   const filteredSlots = slots.filter((slot) => {
-//     const matchService = !filterServiceId || slot.serviceId === Number(filterServiceId);
-//     const matchDate = !filterDate || slot.slotDate === filterDate;
-//     return matchService && matchDate;
-//   });
+//   const confirmDelete = async () => {
+//     if (!deletingSlotId) return;
+//     await serviceSlotService.remove(deletingSlotId);
+//     setDeleteDialogOpen(false);
+//     setDeletingSlotId(null);
+//     handleSearch(); // Refresh
+//   };
 
-//   const totalPages = Math.ceil(filteredSlots.length / ITEMS_PER_PAGE);
+//   // Pagination calculations
+//   const totalPages = Math.ceil(slots.length / ITEMS_PER_PAGE);
 //   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-//   const paginated = filteredSlots.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+//   const currentSlots = slots.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-//   // ==================== PAGINATION HELPER ====================
-//   const getPaginationNumbers = (): (number | string)[] => {
+//   const getPageNumbers = () => {
+//     const pages: (number | "ellipsis")[] = [];
 //     if (totalPages <= 7) {
-//       return Array.from({ length: totalPages }, (_, i) => i + 1);
+//       for (let i = 1; i <= totalPages; i++) pages.push(i);
+//     } else {
+//       if (currentPage <= 3) {
+//         pages.push(1, 2, 3, 4, "ellipsis", totalPages);
+//       } else if (currentPage >= totalPages - 2) {
+//         pages.push(1, "ellipsis", totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+//       } else {
+//         pages.push(1, "ellipsis", currentPage - 1, currentPage, currentPage + 1, "ellipsis", totalPages);
+//       }
 //     }
-
-//     const pages: (number | string)[] = [1];
-
-//     if (currentPage > 3) {
-//       pages.push("...");
-//     }
-
-//     const start = Math.max(2, currentPage - 1);
-//     const end = Math.min(totalPages - 1, currentPage + 1);
-
-//     for (let i = start; i <= end; i++) {
-//       pages.push(i);
-//     }
-
-//     if (currentPage < totalPages - 2) {
-//       pages.push("...");
-//     }
-
-//     if (totalPages > 1) {
-//       pages.push(totalPages);
-//     }
-
 //     return pages;
 //   };
 
+//   const selectedServiceName = services.find((s) => s.id.toString() === selectedServiceId)?.name || "";
+//   const selectedLocationName = locations.find((l) => l.id.toString() === selectedLocationId)?.name || "";
+
+//   const totalCapacity = slots.reduce((sum, slot) => sum + slot.maxCapacity, 0);
+//   const totalBooked = slots.reduce((sum, slot) => sum + slot.bookedCount, 0);
+
 //   return (
-//     <div className="min-h-screen bg-background text-foreground">
-//       <div className="mx-auto max-w-7xl">
-//         {/* HEADER */}
-//         <div className="mb-8 flex items-end justify-between">
-//           <div>
-//             <h1 className="text-3xl font-bold">Quản lý Slot Dịch vụ</h1>
-//             <p className="mt-2 text-sm text-muted-foreground">Quản lý các khung giờ đặt lịch</p>
-//           </div>
-
-//           <Link
-//             href="/slots/create"
-//             className="flex items-center gap-2 rounded-xl bg-orange-500 px-5 py-3 font-medium text-white hover:bg-orange-600"
-//           >
-//             <Plus size={20} />
-//             Tạo Slot Mới
-//           </Link>
-//         </div>
-
-//         {/* FILTER */}
-//         <div className="mb-6 flex gap-4">
-//           <div>
-//             <label className="text-sm font-medium">Dịch vụ</label>
-//             <select
-//               value={filterServiceId}
-//               onChange={(e) => setFilterServiceId(e.target.value)}
-//               className="mt-1 w-72 rounded-lg border px-3 py-2"
-//             >
-//               <option value="">Tất cả dịch vụ</option>
-//               {services.map((service) => (
-//                 <option key={service.id} value={service.id}>
-//                   {service.name}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-
-//           <div>
-//             <label className="text-sm font-medium">Ngày</label>
-//             <input
-//               type="date"
-//               value={filterDate}
-//               onChange={(e) => setFilterDate(e.target.value)}
-//               className="mt-1 rounded-lg border px-3 py-2"
-//             />
-//           </div>
-//         </div>
-
-//         {/* TABLE */}
-//         <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
-//           <table className="w-full">
-//             <thead className="border-b bg-muted/50">
-//               <tr>
-//                 <th className="px-6 py-4 text-left">STT</th>
-//                 <th className="px-6 py-4 text-left">Dịch vụ</th>
-//                 <th className="px-6 py-4 text-left">Trung tâm</th>
-//                 <th className="px-6 py-4 text-left">Ngày</th>
-//                 <th className="px-6 py-4 text-left">Giờ</th>
-//                 <th className="px-6 py-4 text-center">Sức chứa</th>
-//                 <th className="px-6 py-4 text-center">Đã đặt</th>
-//                 <th className="px-6 py-4 text-center">Hành động</th>
-//               </tr>
-//             </thead>
-
-//             <tbody>
-//               {loading ? (
-//                 <tr>
-//                   <td colSpan={8} className="py-20 text-center text-muted-foreground">
-//                     Đang tải...
-//                   </td>
-//                 </tr>
-//               ) : paginated.length === 0 ? (
-//                 <tr>
-//                   <td colSpan={8} className="py-20 text-center text-muted-foreground">
-//                     Không có slot nào
-//                   </td>
-//                 </tr>
-//               ) : (
-//                 paginated.map((slot, index) => (
-//                   <tr key={slot.id} className="border-t hover:bg-accent/40">
-//                     <td className="px-6 py-4 text-sm text-muted-foreground">{startIndex + index + 1}</td>
-//                     <td className="px-6 py-4 font-medium">{slot.serviceId}</td>
-//                     <td className="px-6 py-4 text-sm text-muted-foreground">{slot.locationId}</td>
-//                     <td className="px-6 py-4">{slot.slotDate}</td>
-//                     <td className="px-6 py-4 font-medium">
-//                       {slot.startTime} - {slot.endTime}
-//                     </td>
-//                     <td className="px-6 py-4 text-center">{slot.maxCapacity}</td>
-//                     <td className="px-6 py-4 text-center">
-//                       <span className="font-medium text-orange-600">
-//                         {slot.bookedCount}/{slot.maxCapacity}
-//                       </span>
-//                     </td>
-//                     <td className="px-6 py-4">
-//                       <div className="flex justify-center gap-2">
-//                         <Link href={`slots/${slot.id}`} className="rounded-xl p-2 hover:bg-accent">
-//                           <Eye size={18} />
-//                         </Link>
-//                         <Link href={`/slots/edit/${slot.id}`} className="rounded-xl p-2 text-blue-600 hover:bg-accent">
-//                           <Edit size={18} />
-//                         </Link>
-//                         <button
-//                           onClick={() => handleDelete(slot.id)}
-//                           className="rounded-xl p-2 text-red-600 hover:bg-red-50"
-//                         >
-//                           <Trash2 size={18} />
-//                         </button>
-//                       </div>
-//                     </td>
-//                   </tr>
-//                 ))
-//               )}
-//             </tbody>
-//           </table>
-
-//           {/* PAGINATION - ĐÃ CẢI TIẾN */}
-//           {!loading && filteredSlots.length > 0 && (
-//             <div className="flex items-center justify-between border-t border-border px-6 py-4">
-//               <p className="text-sm text-muted-foreground">
-//                 Hiển thị {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, filteredSlots.length)} /{" "}
-//                 {filteredSlots.length}
-//               </p>
-
-//               <div className="flex gap-2">
-//                 <button
-//                   disabled={currentPage === 1}
-//                   onClick={() => setCurrentPage((p) => p - 1)}
-//                   className="rounded-xl border px-4 py-2 text-sm disabled:opacity-50 hover:bg-accent"
-//                 >
-//                   Previous
-//                 </button>
-
-//                 {getPaginationNumbers().map((page, index) => (
-//                   <button
-//                     key={index}
-//                     onClick={() => typeof page === "number" && setCurrentPage(page)}
-//                     disabled={page === "..."}
-//                     className={`rounded-xl px-4 py-2 text-sm ${
-//                       page === currentPage
-//                         ? "bg-primary text-white"
-//                         : page === "..."
-//                           ? "cursor-default text-muted-foreground"
-//                           : "border hover:bg-accent"
-//                     }`}
-//                   >
-//                     {page}
-//                   </button>
-//                 ))}
-
-//                 <button
-//                   disabled={currentPage === totalPages}
-//                   onClick={() => setCurrentPage((p) => p + 1)}
-//                   className="rounded-xl border px-4 py-2 text-sm disabled:opacity-50 hover:bg-accent"
-//                 >
-//                   Next
-//                 </button>
-//               </div>
+//     <main className="min-h-screen bg-background">
+//       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+//         <div className="space-y-6">
+//           {/* Header */}
+//           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+//             <div>
+//               <h1 className="   font-bold tracking-tight">Quản lý Slot Dịch vụ</h1>
+//               <p className="   text-muted-foreground mt-1">Chọn dịch vụ và trung tâm để xem danh sách slots</p>
 //             </div>
-//           )}
+//             <div className="flex items-center gap-2">
+//               <Link
+//                 href="/slots/edit"
+//                 className="flex items-center gap-2 rounded-md bg-primary px-2 py-2    font-medium text-primary-foreground transition hover:opacity-90"
+//               >
+//                 <Plus size={18} />
+//                 Edit
+//               </Link>
+//               <Link
+//                 href="/slots/create"
+//                 className="flex items-center gap-2 rounded-md bg-primary px-2 py-2    font-medium text-primary-foreground transition hover:opacity-90"
+//               >
+//                 <Plus size={18} />
+//                 Tạo Slot Mới
+//               </Link>
+//             </div>
+//           </div>
+
+//           <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+//             {/* Main Content */}
+//             <div className="space-y-6">
+//               {/* Filter Card */}
+//               <Card>
+//                 <CardHeader>
+//                   <CardTitle>Bộ lọc tìm kiếm</CardTitle>
+//                   <CardDescription>Chọn dịch vụ và trung tâm để xem danh sách slot</CardDescription>
+//                 </CardHeader>
+//                 <CardContent className="space-y-4">
+//                   <div className="space-y-2">
+//                     <label className="   text-muted-foreground">
+//                       Dịch vụ <span className="text-red-500">*</span>
+//                     </label>
+//                     <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
+//                       <SelectTrigger>
+//                         <SelectValue placeholder="Chọn dịch vụ..." />
+//                       </SelectTrigger>
+//                       <SelectContent>
+//                         {services.map((service) => (
+//                           <SelectItem key={service.id} value={service.id.toString()}>
+//                             {service.name}
+//                           </SelectItem>
+//                         ))}
+//                       </SelectContent>
+//                     </Select>
+//                   </div>
+
+//                   <div className="space-y-2">
+//                     <label className="   text-muted-foreground">
+//                       Trung tâm <span className="text-red-500">*</span>
+//                     </label>
+//                     <Select
+//                       value={selectedLocationId}
+//                       onValueChange={setSelectedLocationId}
+//                       disabled={!selectedServiceId}
+//                     >
+//                       <SelectTrigger>
+//                         <SelectValue placeholder={selectedServiceId ? "Chọn trung tâm..." : "Chọn dịch vụ trước"} />
+//                       </SelectTrigger>
+//                       <SelectContent>
+//                         {locations.map((loc) => (
+//                           <SelectItem key={loc.id} value={loc.id.toString()}>
+//                             {loc.name}
+//                           </SelectItem>
+//                         ))}
+//                       </SelectContent>
+//                     </Select>
+//                   </div>
+
+//                   <div className="space-y-2">
+//                     <label className="   text-muted-foreground">Ngày (tùy chọn)</label>
+//                     <Popover>
+//                       <PopoverTrigger asChild>
+//                         <Button
+//                           variant="outline"
+//                           className={cn(
+//                             "w-full justify-start text-left font-normal",
+//                             !selectedDate && "text-muted-foreground",
+//                           )}
+//                         >
+//                           <CalendarIcon className="mr-2 h-4 w-4" />
+//                           {selectedDate ? format(selectedDate, "EEEE, dd/MM/yyyy", { locale: vi }) : "Chọn ngày"}
+//                         </Button>
+//                       </PopoverTrigger>
+//                       <PopoverContent className="w-auto p-0">
+//                         <Calendar mode="single" selected={selectedDate} onSelect={setSelectedDate} />
+//                       </PopoverContent>
+//                     </Popover>
+//                   </div>
+
+//                   <Button
+//                     onClick={handleSearch}
+//                     disabled={!selectedServiceId || !selectedLocationId || isLoading}
+//                     className="w-full"
+//                   >
+//                     {isLoading ? (
+//                       <>
+//                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+//                         Đang tìm...
+//                       </>
+//                     ) : (
+//                       <>
+//                         <Search className="mr-2 h-4 w-4" />
+//                         Tìm kiếm Slots
+//                       </>
+//                     )}
+//                   </Button>
+//                 </CardContent>
+//               </Card>
+
+//               {/* Results */}
+//               <Card>
+//                 <CardHeader>
+//                   <CardTitle>Danh sách Slot</CardTitle>
+//                   {hasSearched && !isLoading && <CardDescription>Tìm thấy {slots.length} slot</CardDescription>}
+//                 </CardHeader>
+//                 <CardContent>
+//                   {!hasSearched && (
+//                     <div className="flex flex-col items-center justify-center py-16 text-center">
+//                       <div className="rounded-full bg-secondary p-4 mb-4">
+//                         <CalendarDays className="h-10 w-10 text-muted-foreground" />
+//                       </div>
+//                       <h3 className="   font-medium">Chưa có dữ liệu</h3>
+//                       <p className="   text-muted-foreground mt-2 max-w-xs">
+//                         Vui lòng chọn dịch vụ và trung tâm, sau đó nhấn "Tìm kiếm"
+//                       </p>
+//                     </div>
+//                   )}
+
+//                   {isLoading && (
+//                     <div className="flex flex-col items-center justify-center py-16">
+//                       <Loader2 className="h-10 w-10 animate-spin text-primary" />
+//                       <p className="mt-4    text-muted-foreground">Đang tải dữ liệu...</p>
+//                     </div>
+//                   )}
+
+//                   {hasSearched && !isLoading && slots.length === 0 && (
+//                     <div className="text-center py-16 text-muted-foreground">Không tìm thấy slot nào phù hợp</div>
+//                   )}
+
+//                   {hasSearched && !isLoading && slots.length > 0 && (
+//                     <>
+//                       <div className="rounded-lg border border-border overflow-hidden">
+//                         <Table>
+//                           <TableHeader>
+//                             <TableRow>
+//                               <TableHead>#</TableHead>
+//                               <TableHead>Ngày</TableHead>
+//                               <TableHead>Giờ</TableHead>
+//                               <TableHead className="text-center">Sức chứa</TableHead>
+//                               <TableHead className="text-center">Đã đặt</TableHead>
+//                               {/* <TableHead className="text-right">Thao tác</TableHead> */}
+//                             </TableRow>
+//                           </TableHeader>
+//                           <TableBody>
+//                             {currentSlots.map((slot, idx) => (
+//                               <TableRow key={slot.id}>
+//                                 <TableCell>{startIndex + idx + 1}</TableCell>
+//                                 <TableCell>{slot.slotDate}</TableCell>
+//                                 <TableCell className="font-medium">
+//                                   {slot.startTime} - {slot.endTime}
+//                                 </TableCell>
+//                                 <TableCell className="text-center">{slot.maxCapacity}</TableCell>
+//                                 <TableCell className="text-center">
+//                                   <Badge variant="secondary">
+//                                     {slot.bookedCount}/{slot.maxCapacity}
+//                                   </Badge>
+//                                 </TableCell>
+//                               </TableRow>
+//                             ))}
+//                           </TableBody>
+//                         </Table>
+//                       </div>
+
+//                       {/* Pagination */}
+//                       {totalPages > 1 && (
+//                         <div className="flex items-center justify-between pt-4">
+//                           <p className="   text-muted-foreground">
+//                             Hiển thị {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, slots.length)} trong{" "}
+//                             {slots.length}
+//                           </p>
+//                           <Pagination>
+//                             <PaginationContent>
+//                               <PaginationItem>
+//                                 <PaginationPrevious
+//                                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+//                                   className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+//                                 />
+//                               </PaginationItem>
+//                               {getPageNumbers().map((page, i) =>
+//                                 page === "ellipsis" ? (
+//                                   <PaginationEllipsis key={i} />
+//                                 ) : (
+//                                   <PaginationItem key={i}>
+//                                     <PaginationLink
+//                                       isActive={currentPage === page}
+//                                       onClick={() => setCurrentPage(page as number)}
+//                                     >
+//                                       {page}
+//                                     </PaginationLink>
+//                                   </PaginationItem>
+//                                 ),
+//                               )}
+//                               <PaginationItem>
+//                                 <PaginationNext
+//                                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+//                                   className={
+//                                     currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"
+//                                   }
+//                                 />
+//                               </PaginationItem>
+//                             </PaginationContent>
+//                           </Pagination>
+//                         </div>
+//                       )}
+//                     </>
+//                   )}
+//                 </CardContent>
+//               </Card>
+//             </div>
+
+//             {/* Sidebar Summary */}
+//             <div className="lg:sticky lg:top-8">
+//               <Card>
+//                 <CardHeader>
+//                   <CardTitle className="   font-medium text-muted-foreground">Tóm tắt tìm kiếm</CardTitle>
+//                 </CardHeader>
+//                 <CardContent className="space-y-6">
+//                   <div className="space-y-4">
+//                     <div className="flex gap-3">
+//                       <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
+//                         <LayersIcon className="h-5 w-5" />
+//                       </div>
+//                       <div>
+//                         <p className="text-xs text-muted-foreground">Dịch vụ</p>
+//                         <p className="font-medium">{selectedServiceName || "—"}</p>
+//                       </div>
+//                     </div>
+
+//                     <div className="flex gap-3">
+//                       <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
+//                         <MapPinIcon className="h-5 w-5" />
+//                       </div>
+//                       <div>
+//                         <p className="text-xs text-muted-foreground">Trung tâm</p>
+//                         <p className="font-medium">{selectedLocationName || "—"}</p>
+//                       </div>
+//                     </div>
+
+//                     <div className="flex gap-3">
+//                       <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
+//                         <CalendarIcon className="h-5 w-5" />
+//                       </div>
+//                       <div>
+//                         <p className="text-xs text-muted-foreground">Ngày</p>
+//                         <p className="font-medium">
+//                           {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "Tất cả ngày"}
+//                         </p>
+//                       </div>
+//                     </div>
+//                   </div>
+
+//                   {hasSearched && slots.length > 0 && (
+//                     <>
+//                       <div className="h-px bg-border" />
+//                       <div className="space-y-4">
+//                         <div className="rounded-lg bg-secondary p-4">
+//                           <div className="flex items-center gap-2    text-muted-foreground">
+//                             <ClockIcon className="h-4 w-4" />
+//                             <span>Tổng số slot</span>
+//                           </div>
+//                           <p className="   font-bold mt-1">{slots.length}</p>
+//                         </div>
+
+//                         <div className="rounded-lg bg-secondary p-4">
+//                           <div className="flex items-center gap-2    text-muted-foreground">
+//                             <UsersIcon className="h-4 w-4" />
+//                             <span>Tổng sức chứa</span>
+//                           </div>
+//                           <p className="   font-bold mt-1">{totalCapacity}</p>
+//                           <p className="   text-muted-foreground mt-1">
+//                             Đã đặt: {totalBooked} (
+//                             {totalCapacity > 0 ? Math.round((totalBooked / totalCapacity) * 100) : 0}%)
+//                           </p>
+//                         </div>
+//                       </div>
+//                     </>
+//                   )}
+//                 </CardContent>
+//               </Card>
+//             </div>
+//           </div>
 //         </div>
 //       </div>
-//     </div>
+
+//       {/* Delete Confirmation Dialog */}
+//       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+//         <AlertDialogContent>
+//           <AlertDialogHeader>
+//             <AlertDialogTitle>Xác nhận xóa slot</AlertDialogTitle>
+//             <AlertDialogDescription>
+//               Hành động này không thể hoàn tác. Bạn có chắc muốn xóa slot này?
+//             </AlertDialogDescription>
+//           </AlertDialogHeader>
+//           <AlertDialogFooter>
+//             <AlertDialogCancel>Hủy</AlertDialogCancel>
+//             <AlertDialogAction onClick={confirmDelete} className="bg-destructive hover:bg-destructive/90">
+//               Xóa
+//             </AlertDialogAction>
+//           </AlertDialogFooter>
+//         </AlertDialogContent>
+//       </AlertDialog>
+//     </main>
 //   );
 // }
 
 "use client";
-
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Edit, Trash2, Eye, Plus, Search } from "lucide-react";
+import { format } from "date-fns";
+import { enUS } from "date-fns/locale";
+import {
+  CalendarIcon,
+  Search,
+  Loader2,
+  CalendarDays,
+  LayersIcon,
+  MapPinIcon,
+  ClockIcon,
+  UsersIcon,
+  Plus,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { serviceSlotService } from "@/services/booking/service-slot.service";
 import { serviceService } from "@/services/booking/service.service";
 import { locationService } from "@/services/booking/location.service";
-
 import { ServiceSlotDTO } from "@/types/booking/service-slot-type";
 import { ServiceDTO } from "@/types/booking/service-type";
 import { LocationDTO } from "@/types/booking/location-type";
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 10;
 
 export default function ServiceSlotsPage() {
+  // Data states
   const [services, setServices] = useState<ServiceDTO[]>([]);
   const [locations, setLocations] = useState<LocationDTO[]>([]);
   const [slots, setSlots] = useState<ServiceSlotDTO[]>([]);
 
+  // UI states
   const [loading, setLoading] = useState(false);
   const [loadingServices, setLoadingServices] = useState(true);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedServiceId, setSelectedServiceId] = useState<string | "">("");
-  const [selectedLocationId, setSelectedLocationId] = useState<string | "">("");
-  const [selectedDate, setSelectedDate] = useState("");
-
   const [hasSearched, setHasSearched] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Load Services ban đầu
+  // Filters
+  const [selectedServiceId, setSelectedServiceId] = useState<string>("");
+  const [selectedLocationId, setSelectedLocationId] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Dialogs
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingSlotId, setDeletingSlotId] = useState<number | null>(null);
+
+  // Load Services
   useEffect(() => {
     serviceService.getAll().then((data) => {
       setServices(data);
@@ -291,7 +581,7 @@ export default function ServiceSlotsPage() {
     });
   }, []);
 
-  // Load Locations khi chọn Service
+  // Load Locations when Service changes
   useEffect(() => {
     if (!selectedServiceId) {
       setLocations([]);
@@ -315,246 +605,389 @@ export default function ServiceSlotsPage() {
 
   const handleSearch = async () => {
     if (!selectedServiceId || !selectedLocationId) {
-      alert("Vui lòng chọn Dịch vụ và Trung tâm");
+      alert("Please select Service and Center");
       return;
     }
 
-    setLoading(true);
+    setIsLoading(true);
     setHasSearched(true);
+    setCurrentPage(1);
 
     try {
-      const allSlots = await serviceSlotService.getAll();
-      let filtered = allSlots.filter(
+      const allSlotsData = await serviceSlotService.getAll();
+      let filtered = allSlotsData.filter(
         (slot) => slot.serviceId === Number(selectedServiceId) && slot.locationId === Number(selectedLocationId),
       );
 
       if (selectedDate) {
-        filtered = filtered.filter((slot) => slot.slotDate === selectedDate);
+        const dateStr = format(selectedDate, "yyyy-MM-dd");
+        filtered = filtered.filter((slot) => slot.slotDate === dateStr);
       }
 
       setSlots(filtered);
-      setCurrentPage(1);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Bạn có chắc muốn xóa slot này?")) return;
-    await serviceSlotService.remove(id);
-    handleSearch(); // Refresh lại danh sách
+    setDeletingSlotId(id);
+    setDeleteDialogOpen(true);
   };
 
+  const confirmDelete = async () => {
+    if (!deletingSlotId) return;
+    await serviceSlotService.remove(deletingSlotId);
+    setDeleteDialogOpen(false);
+    setDeletingSlotId(null);
+    handleSearch(); // Refresh
+  };
+
+  // Pagination calculations
   const totalPages = Math.ceil(slots.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginated = slots.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const currentSlots = slots.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  // Pagination helper (giữ nguyên logic đẹp)
-  const getPaginationNumbers = (): (number | string)[] => {
-    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
-
-    const pages: (number | string)[] = [1];
-    if (currentPage > 3) pages.push("...");
-
-    const start = Math.max(2, currentPage - 1);
-    const end = Math.min(totalPages - 1, currentPage + 1);
-    for (let i = start; i <= end; i++) pages.push(i);
-
-    if (currentPage < totalPages - 2) pages.push("...");
-    if (totalPages > 1) pages.push(totalPages);
-
+  const getPageNumbers = () => {
+    const pages: (number | "ellipsis")[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        pages.push(1, 2, 3, 4, "ellipsis", totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1, "ellipsis", totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pages.push(1, "ellipsis", currentPage - 1, currentPage, currentPage + 1, "ellipsis", totalPages);
+      }
+    }
     return pages;
   };
 
+  const selectedServiceName = services.find((s) => s.id.toString() === selectedServiceId)?.name || "";
+  const selectedLocationName = locations.find((l) => l.id.toString() === selectedLocationId)?.name || "";
+
+  const totalCapacity = slots.reduce((sum, slot) => sum + slot.maxCapacity, 0);
+  const totalBooked = slots.reduce((sum, slot) => sum + slot.bookedCount, 0);
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-7xl">
-        {/* HEADER */}
-        <div className="mb-8 flex items-end justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Quản lý Slot Dịch vụ</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Chọn dịch vụ và trung tâm để xem danh sách slots</p>
+    <main className="min-h-screen bg-background">
+      <div className="mx-auto ">
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="  text-xl font-bold tracking-tight">Service Slot Management</h1>
+              <p className="   text-muted-foreground mt-1">Select service and center to view slot list</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/slots/edit"
+                className="flex items-center underline gap-2 rounded-md  px-2 py-2    font-medium text-primary transition hover:opacity-90"
+              >
+                {/* <Plus size={18} /> */}
+                Edit Slots
+              </Link>
+              <Link
+                href="/slots/create"
+                className="flex items-center gap-2 rounded-md bg-primary px-2 py-2    font-medium text-primary-foreground transition hover:opacity-90"
+              >
+                <Plus size={18} />
+                Create new slot
+              </Link>
+            </div>
           </div>
 
-          <Link
-            href="/slots/create"
-            className="flex items-center gap-2 rounded-xl bg-orange-500 px-5 py-3 font-medium text-white hover:bg-orange-600"
-          >
-            <Plus size={20} />
-            Tạo Slot Mới
-          </Link>
-        </div>
+          <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+            {/* Main Content */}
+            <div className="space-y-6">
+              {/* Filter Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Search Filters</CardTitle>
+                  <CardDescription>Select service and center to view slots</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="   text-muted-foreground">
+                      Service <span className="text-red-500">*</span>
+                    </label>
+                    <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
+                      <SelectTrigger className="rounded-sm! border-border w-full ring-0!">
+                        <SelectValue placeholder="Select service..." />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-sm! w-full mt-8">
+                        {services.map((service) => (
+                          <SelectItem key={service.id} value={service.id.toString()}>
+                            {service.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-        {/* SELECTORS */}
-        <div className="mb-8 rounded-xl border bg-card p-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="text-sm font-medium">Dịch vụ</label>
-              <select
-                value={selectedServiceId}
-                onChange={(e) => setSelectedServiceId(e.target.value)}
-                className="mt-1 w-full rounded-lg border px-3 py-3"
-                disabled={loadingServices}
-              >
-                <option value="">-- Chọn dịch vụ --</option>
-                {services.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Trung tâm</label>
-              <select
-                value={selectedLocationId}
-                onChange={(e) => setSelectedLocationId(e.target.value)}
-                className="mt-1 w-full rounded-lg border px-3 py-3"
-                disabled={!selectedServiceId}
-              >
-                <option value="">-- Chọn trung tâm --</option>
-                {locations.map((l) => (
-                  <option key={l.id} value={l.id}>
-                    {l.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Ngày</label>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="mt-1 w-full rounded-lg border px-3 py-3"
-              />
-            </div>
-
-            <div className="flex items-end">
-              <button
-                onClick={handleSearch}
-                disabled={!selectedServiceId || !selectedLocationId || loading}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-medium flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                <Search size={18} />
-                {loading ? "Đang tải..." : "Xem Danh sách Slots"}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* TABLE - Chỉ hiển thị sau khi đã search */}
-        {hasSearched && (
-          <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
-            <table className="w-full">
-              <thead className="border-b bg-muted/50">
-                <tr>
-                  <th className="px-6 py-4 text-left">STT</th>
-                  <th className="px-6 py-4 text-left">Ngày</th>
-                  <th className="px-6 py-4 text-left">Giờ</th>
-                  <th className="px-6 py-4 text-center">Sức chứa</th>
-                  <th className="px-6 py-4 text-center">Đã đặt</th>
-                  <th className="px-6 py-4 text-center">Hành động</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan={6} className="py-20 text-center">
-                      Đang tải...
-                    </td>
-                  </tr>
-                ) : paginated.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-20 text-center text-muted-foreground">
-                      Không có slot nào cho lựa chọn này
-                    </td>
-                  </tr>
-                ) : (
-                  paginated.map((slot, index) => (
-                    <tr key={slot.id} className="border-t hover:bg-accent/40">
-                      <td className="px-6 py-4">{startIndex + index + 1}</td>
-                      <td className="px-6 py-4">{slot.slotDate}</td>
-                      <td className="px-6 py-4 font-medium">
-                        {slot.startTime} - {slot.endTime}
-                      </td>
-                      <td className="px-6 py-4 text-center">{slot.maxCapacity}</td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="font-medium text-orange-600">
-                          {slot.bookedCount}/{slot.maxCapacity}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex justify-center gap-2">
-                          {/* <Link href={`/slots/${slot.id}`} className="rounded-xl p-2 hover:bg-accent">
-                            <Eye size={18} />
-                          </Link> */}
-                          <Link href={`/slots/${slot.id}`} className="rounded-xl p-2 text-blue-600 hover:bg-accent">
-                            <Edit size={18} />
-                          </Link>
-                          <button
-                            onClick={() => handleDelete(slot.id)}
-                            className="rounded-xl p-2 text-red-600 hover:bg-red-50"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-
-            {/* Pagination */}
-            {!loading && slots.length > 0 && (
-              <div className="flex items-center justify-between border-t px-6 py-4">
-                <p className="text-sm text-muted-foreground">
-                  Hiển thị {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, slots.length)} / {slots.length}
-                </p>
-
-                <div className="flex gap-2">
-                  {/* Previous, Numbers, Next buttons giống như trước */}
-                  <button
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage((p) => p - 1)}
-                    className="rounded-xl border px-4 py-2 text-sm disabled:opacity-50 hover:bg-accent"
-                  >
-                    Previous
-                  </button>
-
-                  {getPaginationNumbers().map((page, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => typeof page === "number" && setCurrentPage(page)}
-                      disabled={page === "..."}
-                      className={`rounded-xl px-4 py-2 text-sm ${
-                        page === currentPage
-                          ? "bg-primary text-white"
-                          : page === "..."
-                            ? "text-muted-foreground"
-                            : "border hover:bg-accent"
-                      }`}
+                  <div className="space-y-2">
+                    <label className="   text-muted-foreground">
+                      Center <span className="text-red-500">*</span>
+                    </label>
+                    <Select
+                      value={selectedLocationId}
+                      onValueChange={setSelectedLocationId}
+                      disabled={!selectedServiceId}
                     >
-                      {page}
-                    </button>
-                  ))}
+                      <SelectTrigger className="border-border ">
+                        <SelectValue placeholder={selectedServiceId ? "Select center..." : "Select service first"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {locations.map((loc) => (
+                          <SelectItem key={loc.id} value={loc.id.toString()}>
+                            {loc.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                  <button
-                    disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage((p) => p + 1)}
-                    className="rounded-xl border px-4 py-2 text-sm disabled:opacity-50 hover:bg-accent"
+                  <div className="space-y-2">
+                    <label className="   text-muted-foreground">Date (optional)</label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !selectedDate && "text-muted-foreground",
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {selectedDate ? format(selectedDate, "EEEE, dd/MM/yyyy", { locale: enUS }) : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar mode="single" selected={selectedDate} onSelect={setSelectedDate} />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <Button
+                    onClick={handleSearch}
+                    disabled={!selectedServiceId || !selectedLocationId || isLoading}
+                    className="w-full"
                   >
-                    Next
-                  </button>
-                </div>
-              </div>
-            )}
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Searching...
+                      </>
+                    ) : (
+                      <>
+                        <Search className="mr-2 h-4 w-4" />
+                        Search Slots
+                      </>
+                    )}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Results */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Slot List</CardTitle>
+                  {hasSearched && !isLoading && <CardDescription>Found {slots.length} slots</CardDescription>}
+                </CardHeader>
+                <CardContent>
+                  {!hasSearched && (
+                    <div className="flex flex-col items-center justify-center py-16 text-center">
+                      <div className="rounded-full bg-secondary p-4 mb-4">
+                        <CalendarDays className="h-10 w-10 text-muted-foreground" />
+                      </div>
+                      <h3 className="   font-medium">No data yet</h3>
+                      <p className="   text-muted-foreground mt-2 max-w-xs">
+                        Please select a service and center, then click "Search"
+                      </p>
+                    </div>
+                  )}
+
+                  {isLoading && (
+                    <div className="flex flex-col items-center justify-center py-16">
+                      <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                      <p className="mt-4    text-muted-foreground">Loading data...</p>
+                    </div>
+                  )}
+
+                  {hasSearched && !isLoading && slots.length === 0 && (
+                    <div className="text-center py-16 text-muted-foreground">No matching slots found</div>
+                  )}
+
+                  {hasSearched && !isLoading && slots.length > 0 && (
+                    <>
+                      <div className="rounded-lg border border-border overflow-hidden">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>#</TableHead>
+                              <TableHead>Date</TableHead>
+                              <TableHead>Time</TableHead>
+                              <TableHead className="text-center">Capacity</TableHead>
+                              <TableHead className="text-center">Booked</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {currentSlots.map((slot, idx) => (
+                              <TableRow key={slot.id}>
+                                <TableCell>{startIndex + idx + 1}</TableCell>
+                                <TableCell>{slot.slotDate}</TableCell>
+                                <TableCell className="font-medium">
+                                  {slot.startTime} - {slot.endTime}
+                                </TableCell>
+                                <TableCell className="text-center">{slot.maxCapacity}</TableCell>
+                                <TableCell className="text-center">
+                                  <Badge variant="secondary">
+                                    {slot.bookedCount}/{slot.maxCapacity}
+                                  </Badge>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+
+                      {/* Pagination */}
+                      {totalPages > 1 && (
+                        <div className="flex items-center justify-between pt-4">
+                          <p className="   text-muted-foreground">
+                            Showing {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, slots.length)} of{" "}
+                            {slots.length}
+                          </p>
+                          <Pagination>
+                            <PaginationContent>
+                              <PaginationItem>
+                                <PaginationPrevious
+                                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                                />
+                              </PaginationItem>
+                              {getPageNumbers().map((page, i) =>
+                                page === "ellipsis" ? (
+                                  <PaginationEllipsis key={i} />
+                                ) : (
+                                  <PaginationItem key={i}>
+                                    <PaginationLink
+                                      isActive={currentPage === page}
+                                      onClick={() => setCurrentPage(page as number)}
+                                    >
+                                      {page}
+                                    </PaginationLink>
+                                  </PaginationItem>
+                                ),
+                              )}
+                              <PaginationItem>
+                                <PaginationNext
+                                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                  className={
+                                    currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"
+                                  }
+                                />
+                              </PaginationItem>
+                            </PaginationContent>
+                          </Pagination>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Sidebar Summary */}
+            <div className="lg:sticky lg:top-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="   font-medium text-muted-foreground">Search Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
+                        <LayersIcon className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Service</p>
+                        <p className="font-medium">{selectedServiceName || "—"}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
+                        <MapPinIcon className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Center</p>
+                        <p className="font-medium">{selectedLocationName || "—"}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
+                        <CalendarIcon className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Date</p>
+                        <p className="font-medium">{selectedDate ? format(selectedDate, "dd/MM/yyyy") : "All dates"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {hasSearched && slots.length > 0 && (
+                    <>
+                      <div className="h-px bg-border" />
+                      <div className="space-y-4">
+                        <div className="rounded-lg bg-secondary p-4">
+                          <div className="flex items-center gap-2    text-muted-foreground">
+                            <ClockIcon className="h-4 w-4" />
+                            <span>Total Slots</span>
+                          </div>
+                          <p className="   font-bold mt-1">{slots.length}</p>
+                        </div>
+
+                        <div className="rounded-lg bg-secondary p-4">
+                          <div className="flex items-center gap-2    text-muted-foreground">
+                            <UsersIcon className="h-4 w-4" />
+                            <span>Total Capacity</span>
+                          </div>
+                          <p className="   font-bold mt-1">{totalCapacity}</p>
+                          <p className="   text-muted-foreground mt-1">
+                            Booked: {totalBooked} (
+                            {totalCapacity > 0 ? Math.round((totalBooked / totalCapacity) * 100) : 0}%)
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </div>
-        )}
+        </div>
       </div>
-    </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Delete Slot</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. Are you sure you want to delete this slot?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </main>
   );
 }

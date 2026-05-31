@@ -38,7 +38,7 @@ export default function MeClientPage() {
                   alt="avatar"
                   width={56}
                   height={56}
-                  className="rounded-full object-cover border border-border"
+                  className="rounded-full aspect-square object-cover border border-border"
                 />
 
                 <div className="min-w-0">
@@ -90,7 +90,7 @@ export default function MeClientPage() {
               <h1 className="font-bold tracking-[-1px] text-xl select-none">Settings</h1>
 
               {/* TABS */}
-              <div className="flex items-center gap-10 mt-10 border-b border-border">
+              <div className="flex items-center gap-10 mt-5 border-b border-border">
                 <button
                   onClick={() => setTab("profile")}
                   className={`pb-4 font-medium border-b-2 transition-all
@@ -118,7 +118,7 @@ export default function MeClientPage() {
             </div>
 
             {/* BODY */}
-            <div className="pt-6">
+            <div className="pt-3">
               {tab === "profile" ? <ProfileTab user={user} setUser={setUser} /> : <ChangePasswordComponent />}
             </div>
           </div>
@@ -197,14 +197,14 @@ function ProfileTab({ user, setUser }: { user: any; setUser: any }) {
   return (
     <div>
       {/* AVATAR */}
-      <div className="flex flex-col items-center md:flex-row  gap-6 pb-10 border-b border-border">
+      <div className="flex flex-col items-center md:flex-row  gap-6 pb-4 border-b border-border">
         <div className="relative">
           <Image
             src={previewUrl || form.avatarUrl || "/image/default.png"}
             alt="avatar"
             width={110}
             height={110}
-            className="rounded-full object-cover border-4 border-background shadow-md"
+            className="rounded-full object-cover aspect-square border-4 border-background shadow-md"
           />
         </div>
 
@@ -242,7 +242,7 @@ function ProfileTab({ user, setUser }: { user: any; setUser: any }) {
         {!editMode && (
           <button
             onClick={() => setEditMode(true)}
-            className="flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition"
+            className="flex items-center justify-center gap-2 px-5 py-2 rounded-lg bg-background text-foreground border border-border font-medium hover:opacity-90 transition"
           >
             <Pencil size={16} />
             Edit Profile
@@ -258,7 +258,7 @@ function ProfileTab({ user, setUser }: { user: any; setUser: any }) {
             const Icon = field.icon;
 
             return (
-              <div key={field.key} className="py-6 flex flex-col lg:flex-row lg:items-center gap-5">
+              <div key={field.key} className="py-3 flex flex-col lg:flex-row lg:items-center gap-5">
                 <div className="w-full lg:w-55 flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center">
                     {Icon && <Icon size={18} className="text-muted-foreground" />}
@@ -291,7 +291,7 @@ function ProfileTab({ user, setUser }: { user: any; setUser: any }) {
           <button
             onClick={handleSave}
             disabled={loading}
-            className="px-6 h-12 rounded-2xl bg-primary text-primary-foreground font-medium hover:opacity-90 transition disabled:opacity-60"
+            className="px-6 h-10 rounded-lg bg-background text-foreground border border-border font-medium hover:opacity-90 transition disabled:opacity-60"
           >
             {loading ? "Saving..." : "Save Changes"}
           </button>
@@ -304,7 +304,7 @@ function ProfileTab({ user, setUser }: { user: any; setUser: any }) {
 
               setPreviewUrl(null);
             }}
-            className="px-6 h-12 rounded-2xl border border-border bg-background hover:bg-accent font-medium transition"
+            className="px-6 h-10 rounded-lg border border-border bg-background hover:bg-accent font-medium transition"
           >
             Cancel
           </button>

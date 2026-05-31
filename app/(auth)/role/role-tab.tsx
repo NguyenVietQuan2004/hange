@@ -159,10 +159,10 @@ export default function RoleTab() {
   return (
     <div className="bg-background text-foreground text-xs! px-2 md:p-0 rounded-xl">
       <div className="flex md:justify-between md:items-center items-start flex-col md:flex-row mb-6">
-        <h2 className="text-2xl font-bold">Role Management</h2>
+        <h2 className="text-xl font-bold">Role Management</h2>
         <button
           onClick={openCreateModal}
-          className="flex mt-2 md:mt-0 items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg hover:opacity-90 transition font-medium"
+          className="flex mt-2 md:mt-0 items-center gap-2 bg-primary text-primary-foreground px-5 py-2 rounded-lg hover:opacity-90 transition font-medium"
         >
           <Plus className="w-5 h-5" />
           Create New Role

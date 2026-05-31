@@ -114,7 +114,7 @@ export default function ChangePasswordComponent() {
 
   return (
     <div className="w-full flex justify-center pb-10 px-2px-4 bg-background text-foreground">
-      <div className="w-full max-w-130 bg-card rounded-[10px] shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-border p-8 md:p-10">
+      <div className="w-full max-w-130 bg-card rounded-[10px] shadow-sm  border-border p-8 md:p-10">
         {/* HEADER */}
         <div>
           <h1 className="font-bold tracking-tight">Change your password</h1>
@@ -260,7 +260,7 @@ export default function ChangePasswordComponent() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-10 rounded-xl bg-primary text-primary-foreground font-semibold mt-10 hover:opacity-90 transition disabled:opacity-70"
+            className="w-full h-10 rounded-xl bg-background border-border text-foreground font-semibold mt-10 hover:opacity-90 transition disabled:opacity-70"
           >
             {loading ? "Changing Password..." : "Change Password"}
           </button>

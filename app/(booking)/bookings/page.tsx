@@ -1,5 +1,5 @@
 "use client";
-
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Check, X, Eye, User } from "lucide-react";
@@ -65,8 +65,8 @@ export default function BookingsPage() {
       <div className="mx-auto max-w-7xl">
         {/* HEADER */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">Booking Management</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Manage all service bookings</p>
+          <h1 className="text-xl font-bold">Booking Management</h1>
+          <p className="mt-2    text-muted-foreground">Manage all service bookings</p>
         </div>
 
         {/* TABLE */}
@@ -74,12 +74,13 @@ export default function BookingsPage() {
           <table className="w-full">
             <thead className="border-b border-border bg-muted/50">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold">#</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold">Service</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold">Location</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold">User</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold">Status</th>
-                <th className="px-6 py-4 text-center text-sm font-semibold">Actions</th>
+                <th className="px-6 py-2 text-left    font-semibold">#</th>
+                <th className="px-2 py-2 text-left    font-semibold">Service</th>
+                <th className="px-2 py-2 text-left    font-semibold">Location</th>
+                <th className="px-6 py-2 text-left    font-semibold">User</th>
+                <th className="px-6 py-2 text-left    font-semibold">Status</th>
+                <th className="px-6 py-2 text-left    font-semibold">Date</th>
+                <th className="px-6 py-2 text-center    font-semibold">Actions</th>
               </tr>
             </thead>
 
@@ -100,27 +101,29 @@ export default function BookingsPage() {
                 paginated.map((b, index) => (
                   <tr key={b.id} className="border-t border-border hover:bg-accent/40">
                     {/* STT */}
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{startIndex + index + 1}</td>
+                    <td className="px-6 py-2    text-muted-foreground">{startIndex + index + 1}</td>
 
                     {/* SERVICE */}
-                    <td className="px-6 py-4 font-medium">{b.serviceName}</td>
+                    <td className="px-2 py-2 max-w-40 text-muted-foreground truncate font-medium">{b.serviceName}</td>
 
                     {/* LOCATION */}
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{b.locationName}</td>
+                    <td className="px-2 py-2 max-w-40 truncate   text-muted-foreground">{b.locationName}</td>
 
                     {/* USER */}
-                    <td className="px-6 py-4">
+                    <td className="px-2 py-2">
                       <div className="flex items-center gap-2">
                         <User size={16} className="text-muted-foreground" />
-                        <div className="text-sm">
-                          <div className="font-medium">{b.userDTO?.fullName || "Unknown"}</div>
-                          <div className="text-xs text-muted-foreground">{b.userDTO?.email}</div>
+                        <div className="  ">
+                          <div className="font-medium max-w-20 text-muted-foreground truncate">
+                            {b.userDTO?.fullName || "Unknown"}
+                          </div>
+                          <div className="text-xs max-w-45 truncate text-muted-foreground">{b.userDTO?.phone}</div>
                         </div>
                       </div>
                     </td>
 
                     {/* STATUS (FIXED COLORS) */}
-                    <td className="px-6 py-4">
+                    <td className="px-2 py-2">
                       <span
                         className={`inline-flex rounded-full border px-3 py-1 text-xs font-medium ${statusStyle(
                           b.status,
@@ -129,10 +132,13 @@ export default function BookingsPage() {
                         {b.status}
                       </span>
                     </td>
-
+                    <td className="px-2 py-2 text-muted-foreground">
+                      {" "}
+                      {format(new Date(b.createdAt), "dd/MM/yyyy HH:mm")}
+                    </td>
                     {/* ACTIONS */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-center gap-2">
+                    <td className="px-2 py-2">
+                      <div className="flex items-center justify-start gap-2">
                         {/* VIEW */}
                         <Link href={`/bookings/${b.id}`} className="rounded-xl p-2 transition hover:bg-accent">
                           <Eye size={18} />
@@ -166,8 +172,8 @@ export default function BookingsPage() {
 
           {/* PAGINATION */}
           {!loading && data.length > 0 && (
-            <div className="flex items-center justify-between border-t border-border px-6 py-4">
-              <p className="text-sm text-muted-foreground">
+            <div className="flex items-center justify-between border-t border-border px-6 py-2">
+              <p className="   text-muted-foreground">
                 Showing {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, data.length)} of {data.length}
               </p>
 
@@ -175,7 +181,7 @@ export default function BookingsPage() {
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage((p) => p - 1)}
-                  className="rounded-xl border px-4 py-2 text-sm disabled:opacity-50"
+                  className="rounded-xl border px-4 py-2    disabled:opacity-50"
                 >
                   Previous
                 </button>
@@ -184,7 +190,7 @@ export default function BookingsPage() {
                   <button
                     key={i}
                     onClick={() => setCurrentPage(i + 1)}
-                    className={`rounded-xl px-4 py-2 text-sm ${
+                    className={`rounded-xl px-4 py-2    ${
                       currentPage === i + 1 ? "bg-primary text-white" : "border hover:bg-accent"
                     }`}
                   >
@@ -195,7 +201,7 @@ export default function BookingsPage() {
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage((p) => p + 1)}
-                  className="rounded-xl border px-4 py-2 text-sm disabled:opacity-50"
+                  className="rounded-xl border px-4 py-2    disabled:opacity-50"
                 >
                   Next
                 </button>

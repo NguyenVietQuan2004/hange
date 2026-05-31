@@ -12,7 +12,7 @@ export default function Header() {
   return (
     <header className="w-full px-6 py-4 border-b border-border bg-background text-foreground flex justify-between items-center">
       {/* LOGO */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1.5">
         <Image
           src={"/image/logo.png"}
           alt="avatar"

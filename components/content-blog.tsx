@@ -37,7 +37,7 @@ const ContentInput: FC<Props> = ({ setValue, watch, errors, isEditting }) => {
   return (
     <div>
       <Label className="mb-2" htmlFor="content">
-        Nội dung
+        {/* Nội dung */}
       </Label>
 
       {mounted ? (

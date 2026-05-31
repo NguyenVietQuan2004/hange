@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { permissionService } from "@/services/auth/permission.service";
 import { Permission } from "@/types/auth/role-type";
-import { ChevronDown, ChevronRight, Plus } from "lucide-react";
+import { ChevronDown, ChevronRight, Pencil, Plus, Trash2 } from "lucide-react";
 
 const emptyForm = {
   name: "",
@@ -111,10 +111,10 @@ export default function PermissionTab() {
   return (
     <div className="bg-background text-xs! text-foreground px-2 md:p-0 rounded-xl">
       <div className="flex md:justify-between md:items-center items-start flex-col md:flex-row mb-6">
-        <h2 className="text-2xl font-bold">Permission Management</h2>
+        <h2 className="text-xl font-bold">Permission Management</h2>
         <button
           onClick={openCreateModal}
-          className="flex mt-2 md:mt-0 items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg hover:opacity-90 transition font-medium"
+          className="flex mt-2 md:mt-0 items-center gap-2 bg-primary text-primary-foreground px-5 py-2 rounded-lg hover:opacity-90 transition font-medium"
         >
           <Plus className="w-5 h-5" />
           Create New Permission
@@ -165,18 +165,18 @@ export default function PermissionTab() {
                           </div>
                         </div>
 
-                        <div className="flex gap-2 self-center">
+                        <div className="flex gap-1 self-center">
                           <button
                             onClick={() => onEdit(p)}
-                            className="px-4 py-2   border border-border rounded-lg hover:bg-accent transition"
+                            className="px-2 py-2    rounded-lg hover:bg-accent transition"
                           >
-                            Edit
+                            <Pencil size={18} />
                           </button>
                           <button
                             onClick={() => setDeleteId(p.id)}
-                            className="px-4 py-2   text-red-500 border border-border rounded-lg hover:bg-red-50 transition"
+                            className="px-2 py-2   text-red-500  rounded-lg hover:bg-red-50 transition"
                           >
-                            Delete
+                            <Trash2 size={18} />
                           </button>
                         </div>
                       </div>

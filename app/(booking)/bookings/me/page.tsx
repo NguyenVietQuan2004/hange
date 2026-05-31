@@ -1,5 +1,17 @@
 "use client";
+import { format } from "date-fns";
 
+import {
+  // ... các icon cũ của bạn
+  Calendar as CalendarIconLucide,
+  MapPinIcon,
+  Clock,
+  Scissors,
+  CheckCircle,
+  CreditCard,
+  FileText,
+  User,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Eye, Ban } from "lucide-react";
 
@@ -74,8 +86,8 @@ export default function MyBookingsPage() {
       <div className="mx-auto max-w-7xl space-y-6">
         {/* HEADER */}
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">My Bookings</h1>
-          <p className="text-sm text-muted-foreground">View and manage your bookings</p>
+          <h1 className="text-xl font-bold tracking-tight">My Bookings</h1>
+          <p className="   text-muted-foreground">View and manage your bookings</p>
         </div>
 
         {/* TABLE */}
@@ -83,11 +95,13 @@ export default function MyBookingsPage() {
           <table className="w-full">
             <thead className="bg-muted/40">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold uppercase">#</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold uppercase">Service</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold uppercase">Location</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold uppercase">Status</th>
-                <th className="px-6 py-4 text-center text-xs font-semibold uppercase">Actions</th>
+                <th className="px-6 py-2 text-left text-xs font-semibold uppercase">#</th>
+                <th className="px-6 py-2 text-left text-xs font-semibold uppercase">Service</th>
+                <th className="px-6 py-2 text-left text-xs font-semibold uppercase">Location</th>
+                <th className="px-6 py-2 text-left text-xs font-semibold uppercase">Status</th>
+                <th className="px-6 py-2 text-left    font-semibold">Date</th>
+
+                <th className="px-6 py-2 text-center text-xs font-semibold uppercase">Actions</th>
               </tr>
             </thead>
 
@@ -106,34 +120,35 @@ export default function MyBookingsPage() {
                 </tr>
               ) : (
                 paginated.map((b, index) => (
-                  <tr key={b.id} className="hover:bg-accent/40 transition">
+                  <tr key={b.id} className="hover:bg-accent/40 transition border-border">
                     {/* STT */}
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{startIndex + index + 1}</td>
+                    <td className="px-6 py-2    text-muted-foreground">{startIndex + index + 1}</td>
 
                     {/* SERVICE */}
-                    <td className="px-6 py-4 font-medium">{b.serviceName}</td>
+                    <td className="px-6 py-2 max-w-45 truncate text-muted-foreground font-medium">{b.serviceName}</td>
 
                     {/* LOCATION */}
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{b.locationName}</td>
+                    <td className="px-6 py-2 max-w-45 truncate   text-muted-foreground">{b.locationName}</td>
 
                     {/* STATUS */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-2">
                       <span
-                        className={`inline-flex rounded-full border px-3 py-1 text-xs font-medium ${statusStyle(
+                        className={`inline-flex rounded-full  border px-3 py-1 text-xs font-medium ${statusStyle(
                           b.status,
                         )}`}
                       >
                         {b.status}
                       </span>
                     </td>
+                    <td className="px-2 py-2 text-muted-foreground">
+                      {" "}
+                      {format(new Date(b.createdAt), "dd/MM/yyyy HH:mm")}
+                    </td>
 
                     {/* ACTIONS */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-center gap-2">
+                    <td className="px-6 py-2">
+                      <div className="flex items-center justify-end gap-2">
                         {/* VIEW (MODAL) */}
-                        <button onClick={() => openDetail(b)} className="rounded-lg p-2 hover:bg-accent transition">
-                          <Eye size={18} />
-                        </button>
 
                         {/* CANCEL */}
                         {canCancel(b.status) && (
@@ -145,6 +160,10 @@ export default function MyBookingsPage() {
                             <Ban size={18} />
                           </button>
                         )}
+
+                        <button onClick={() => openDetail(b)} className="rounded-lg p-2 hover:bg-accent transition">
+                          <Eye size={18} />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -155,8 +174,8 @@ export default function MyBookingsPage() {
 
           {/* PAGINATION */}
           {!loading && data.length > 0 && (
-            <div className="flex items-center justify-between border-t px-6 py-4">
-              <p className="text-sm text-muted-foreground">
+            <div className="flex items-center justify-between border-t border-border px-6 py-4">
+              <p className="   text-muted-foreground">
                 Showing {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, data.length)} of {data.length}
               </p>
 
@@ -164,16 +183,16 @@ export default function MyBookingsPage() {
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage((p) => p - 1)}
-                  className="rounded-lg border px-4 py-2 text-sm hover:bg-accent disabled:opacity-40"
+                  className="rounded-lg border px-4 py-2    hover:bg-accent disabled:opacity-40"
                 >
-                  Prev
+                  Previous
                 </button>
 
                 {Array.from({ length: totalPages }, (_, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentPage(i + 1)}
-                    className={`rounded-lg px-4 py-2 text-sm ${
+                    className={`rounded-lg px-4 py-2    ${
                       currentPage === i + 1 ? "bg-primary text-white" : "border hover:bg-accent"
                     }`}
                   >
@@ -184,7 +203,7 @@ export default function MyBookingsPage() {
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage((p) => p + 1)}
-                  className="rounded-lg border px-4 py-2 text-sm hover:bg-accent disabled:opacity-40"
+                  className="rounded-lg border px-4 py-2    hover:bg-accent disabled:opacity-40"
                 >
                   Next
                 </button>
@@ -195,70 +214,115 @@ export default function MyBookingsPage() {
       </div>
 
       {/* CREATE BOOKING */}
-      <div className="mt-20">
+      {/* <div className="mt-20">
         <CreateBookingPage />
-      </div>
+      </div> */}
 
       {/* MODAL DETAIL */}
       {selectedBooking && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={closeDetail}>
           <div className="w-full max-w-2xl rounded-xl bg-card p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
             {/* HEADER */}
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold">Booking #{selectedBooking.id}</h2>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <CalendarIconLucide className="h-6 w-6 text-primary" />
+                <h2 className="text-xl font-bold">Booking #{selectedBooking.id}</h2>
+              </div>
 
-              <button onClick={closeDetail} className="rounded-lg px-3 py-1 text-sm hover:bg-accent">
-                Close
+              <button
+                onClick={closeDetail}
+                className="rounded-lg px-4 py-2    hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                Đóng
               </button>
             </div>
 
             {/* CONTENT */}
-            <div className="space-y-4 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Service</span>
+            <div className="space-y-5   ">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3 text-muted-foreground">
+                  <Scissors className="h-5 w-5" />
+                  <span>Dịch vụ</span>
+                </div>
                 <span className="font-medium">{selectedBooking.serviceName}</span>
               </div>
 
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Location</span>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3 text-muted-foreground">
+                  <MapPinIcon className="h-5 w-5" />
+                  <span>Trung tâm</span>
+                </div>
                 <span className="font-medium">{selectedBooking.locationName}</span>
               </div>
 
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Status</span>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3 text-muted-foreground">
+                  <CheckCircle className="h-5 w-5" />
+                  <span>Trạng thái</span>
+                </div>
                 <span className="font-medium">{selectedBooking.status}</span>
               </div>
 
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Price</span>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3 text-muted-foreground">
+                  <CreditCard className="h-5 w-5" />
+                  <span>Giá</span>
+                </div>
                 <span className="font-medium">{selectedBooking.servicePrice?.toLocaleString()} ₫</span>
               </div>
 
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Duration</span>
-                <span className="font-medium">{selectedBooking.serviceDuration} min</span>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3 text-muted-foreground">
+                  <Clock className="h-5 w-5" />
+                  <span>Thời lượng</span>
+                </div>
+                <span className="font-medium">{selectedBooking.serviceDuration} phút</span>
               </div>
 
               <div className="border-t pt-4">
-                <div className="text-muted-foreground mb-1">Time</div>
-                <div className="font-medium">
+                <div className="flex items-center gap-3 text-muted-foreground mb-2">
+                  <CalendarIconLucide className="h-5 w-5" />
+                  <span>Thời gian</span>
+                </div>
+                <div className="font-medium pl-8">
                   {selectedBooking.slotDate} | {selectedBooking.slotTimeStart} - {selectedBooking.slotTimeEnd}
                 </div>
               </div>
 
               {selectedBooking.note && (
                 <div className="border-t pt-4">
-                  <div className="text-muted-foreground mb-1">Note</div>
-                  <div>{selectedBooking.note}</div>
+                  <div className="flex items-center gap-3 text-muted-foreground mb-2">
+                    <FileText className="h-5 w-5" />
+                    <span>Ghi chú</span>
+                  </div>
+                  <div className="pl-8">{selectedBooking.note}</div>
                 </div>
               )}
 
               {selectedBooking.userDTO && (
-                <div className="border-t pt-4">
-                  <div className="text-muted-foreground mb-1">User</div>
-                  <div className="font-medium">{selectedBooking.userDTO.fullName}</div>
-                  <div className="text-xs text-muted-foreground">{selectedBooking.userDTO.email}</div>
-                </div>
+                <>
+                  <div className="border-t pt-4">
+                    <div className="flex items-center gap-3 text-muted-foreground mb-2">
+                      <User className="h-5 w-5" />
+                      <span>Khách hàng</span>
+                    </div>
+                    <div className="pl-8">
+                      <div className="font-medium">{selectedBooking.userDTO.fullName}</div>
+                      <div className="text-xs text-muted-foreground">{selectedBooking.userDTO.email}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-3 text-muted-foreground">
+                      <CalendarIconLucide className="h-5 w-5" />
+                      <span>Ngày tạo</span>
+                    </div>
+
+                    <span className="font-medium">
+                      {format(new Date(selectedBooking.createdAt), "dd/MM/yyyy HH:mm")}
+                    </span>
+                  </div>
+                </>
               )}
             </div>
           </div>

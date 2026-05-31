@@ -64,7 +64,7 @@ export default function BookingDetailPage() {
 
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 rounded-lg border px-4 py-2 text-sm hover:bg-accent"
+          className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm hover:bg-accent"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
@@ -74,7 +74,7 @@ export default function BookingDetailPage() {
       {/* CONTENT GRID */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* LEFT CARD */}
-        <div className="rounded-xl border bg-card p-6 space-y-5">
+        <div className="rounded-xl border border-border bg-card p-6 space-y-5">
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Status</span>
 
@@ -123,7 +123,7 @@ export default function BookingDetailPage() {
         </div>
 
         {/* RIGHT CARD */}
-        <div className="rounded-xl border bg-card p-6 space-y-5">
+        <div className="rounded-xl border border-border bg-card p-6 space-y-5">
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Date</span>
             <span className="font-medium">{booking.slotDate}</span>
