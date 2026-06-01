@@ -57,8 +57,7 @@ export default function RoleTab() {
     setForm(emptyForm);
     setEditId(null);
     setShowFormModal(true);
-
-    setExpandedGroups(new Set()); // Mở tất cả group khi tạo mới
+    setExpandedGroups(new Set());
   };
 
   /* ================= EDIT ================= */
@@ -95,8 +94,8 @@ export default function RoleTab() {
       return {
         ...prev,
         permissionIds: allSelected
-          ? prev.permissionIds.filter((id) => !groupIds.includes(id)) // Bỏ hết
-          : [...new Set([...prev.permissionIds, ...groupIds])], // Thêm hết
+          ? prev.permissionIds.filter((id) => !groupIds.includes(id))
+          : [...new Set([...prev.permissionIds, ...groupIds])],
       };
     });
   };
@@ -177,11 +176,11 @@ export default function RoleTab() {
           {roles.map((role) => (
             <div key={role.id} className="border border-border rounded-xl p-5 bg-card hover:shadow-md transition-all">
               <div>
-                <h3 className="font-semibold    ">{role.name}</h3>
-                {role.description && <p className="   text-muted-foreground mt-1 line-clamp-2">{role.description}</p>}
+                <h3 className="font-semibold">{role.name}</h3>
+                {role.description && <p className="text-muted-foreground mt-1 line-clamp-2">{role.description}</p>}
               </div>
 
-              <div className="mt-4    text-muted-foreground">
+              <div className="mt-4 text-muted-foreground">
                 <span className="font-medium text-foreground">{role.permissions.length}</span> permissions assigned
               </div>
 
@@ -212,7 +211,7 @@ export default function RoleTab() {
 
       {/* ================= CREATE / EDIT MODAL ================= */}
       {showFormModal && (
-        <div className="fixed inset-0 tex-xs! bg-black/60 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-card border border-border rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
             <div className="p-6 border-b">
               <h3 className="text-xl font-bold">{editId ? "Edit Role" : "Create New Role"}</h3>
@@ -220,7 +219,7 @@ export default function RoleTab() {
 
             <div className="p-6 space-y-5 overflow-auto flex-1">
               <div>
-                <label className="   font-medium block mb-1">
+                <label className="font-medium block mb-1">
                   Role Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -232,7 +231,7 @@ export default function RoleTab() {
               </div>
 
               <div>
-                <label className="   font-medium block mb-1">Description</label>
+                <label className="font-medium block mb-1">Description</label>
                 <input
                   className="w-full px-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="Role description (optional)"
@@ -243,7 +242,7 @@ export default function RoleTab() {
 
               {/* GROUPED PERMISSIONS */}
               <div>
-                <label className="   font-medium block mb-3">Assign Permissions</label>
+                <label className="font-medium block mb-3">Assign Permissions</label>
                 <div className="border border-border rounded-xl overflow-hidden">
                   {Object.entries(groupedPermissions).map(([module, items]) => {
                     const status = getGroupStatus(module);
@@ -257,7 +256,11 @@ export default function RoleTab() {
                           onClick={() => toggleGroupExpand(module)}
                         >
                           <div className="flex items-center gap-3">
-                            {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                            {isExpanded ? (
+                              <ChevronDown className="w-4 h-4 transition-transform" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4 transition-transform" />
+                            )}
                             <input
                               type="checkbox"
                               checked={status.checked}
@@ -272,9 +275,13 @@ export default function RoleTab() {
                           <span className="text-xs text-muted-foreground">{items.length} permissions</span>
                         </div>
 
-                        {/* Group Content */}
-                        {isExpanded && (
-                          <div className="px-2 md:px-8 py-3 space-y-2 bg-card">
+                        {/* Group Content - Slide Animation */}
+                        <div
+                          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                            isExpanded ? "max-h-400 opacity-100" : "max-h-0 opacity-0"
+                          }`}
+                        >
+                          <div className="px-2 md:px-8 py-3 space-y-2 bg-card pt-1">
                             {items.map((p) => (
                               <label
                                 key={p.id}
@@ -287,7 +294,7 @@ export default function RoleTab() {
                                   className="accent-primary"
                                 />
                                 <div className="flex-1">
-                                  <div className="font-medium   ">{p.name}</div>
+                                  <div className="font-medium">{p.name}</div>
                                   <div className="text-xs text-muted-foreground font-mono">
                                     {p.method} {p.apiPath}
                                   </div>
@@ -295,7 +302,7 @@ export default function RoleTab() {
                               </label>
                             ))}
                           </div>
-                        )}
+                        </div>
                       </div>
                     );
                   })}

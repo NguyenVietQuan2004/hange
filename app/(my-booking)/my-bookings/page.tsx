@@ -16,7 +16,7 @@ import { Eye, Ban } from "lucide-react";
 
 import { bookingService } from "@/services/booking/booking.service";
 import { BookingDTO } from "@/types/booking/booking-type";
-import CreateBookingPage from "../_components/bookings-form";
+import CreateBookingPage from "../../(booking)/bookings/_components/bookings-form";
 
 const ITEMS_PER_PAGE = 6;
 

@@ -1,9 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { ShieldCheck, KeyRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-import { FolderPlus, BriefcaseBusiness, MapPin, CalendarClock, UserCheck, Clock, LayoutGrid } from "lucide-react";
 
 import HeaderLayout from "@/components/layout/header-layout";
 import FooterLayout from "@/components/layout/footer-layout";
@@ -12,15 +12,13 @@ type Props = {
   children: React.ReactNode;
 };
 
-const menus = [
-  { name: "Categories", href: "/categories", icon: FolderPlus },
-  { name: "Services", href: "/services", icon: BriefcaseBusiness },
-  { name: "Locations", href: "/locations", icon: MapPin },
-  { name: "Bookings", href: "/bookings", icon: CalendarClock },
-  { name: "Service Slots", href: "/slots", icon: Clock },
-];
-export default function BookingAdminLayout({ children }: Props) {
+export default function RbacLayout({ children }: Props) {
   const pathname = usePathname();
+
+  const menus = [
+    { name: "Permissions", href: "/rbac/permissions", icon: ShieldCheck },
+    { name: "Roles", href: "/rbac/roles", icon: KeyRound },
+  ];
 
   return (
     <HeaderLayout>
@@ -34,8 +32,7 @@ export default function BookingAdminLayout({ children }: Props) {
                   {/* HEADER */}
                   <div className="mb-10">
                     <p className="text-muted-foreground">Administration</p>
-
-                    <h1 className="font-bold mt-1">Booking Management</h1>
+                    <h1 className="font-bold mt-1">RBAC Management</h1>
                   </div>
 
                   {/* MENU */}
@@ -55,7 +52,6 @@ export default function BookingAdminLayout({ children }: Props) {
                           }`}
                         >
                           <Icon size={20} strokeWidth={1.8} />
-
                           <span className="font-medium">{menu.name}</span>
                         </Link>
                       );
@@ -71,24 +67,24 @@ export default function BookingAdminLayout({ children }: Props) {
                 {/* PAGE HEADER */}
                 <div>
                   <div className="flex items-center gap-3">
-                    <LayoutGrid className="w-5 h-5 text-primary" />
-
-                    <h1 className="font-bold tracking-[-1px] text-lg">Booking Administration</h1>
+                    <ShieldCheck className="w-5 h-5 text-primary" />
+                    <h1 className="font-bold tracking-[-1px] text-lg">Access Control</h1>
                   </div>
 
-                  <p className="mt-3 text-muted-foreground">Manage categories, booking services and service slots.</p>
+                  <p className="mt-3 text-muted-foreground">
+                    Manage system permissions and role authorization settings.
+                  </p>
 
                   {/* TOP NAV */}
                   <div className="flex items-center gap-10 mt-10 border-b border-border overflow-x-auto">
                     {menus.map((menu) => {
                       const active = pathname === menu.href;
-
                       return (
                         <Link
                           key={menu.name}
                           href={menu.href}
                           className={`pb-4 font-medium border-b-2 whitespace-nowrap transition-all
-          ${active ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+                          ${active ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
                         >
                           {menu.name}
                         </Link>
@@ -96,6 +92,7 @@ export default function BookingAdminLayout({ children }: Props) {
                     })}
                   </div>
                 </div>
+
                 {/* BODY */}
                 <div className="pt-8">{children}</div>
               </div>

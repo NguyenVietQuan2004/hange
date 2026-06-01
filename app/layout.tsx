@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
       className={cn("h-full", "antialiased", monaSans.variable, "font-sans", geist.variable)}
     >
-      <body className="min-h-screen flex flex-col  text-sm font-sans">
+      <body className="min-h-screen max-w-[100vw] flex flex-col  text-sm font-sans">
         <AuthProvider>
           {" "}
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>

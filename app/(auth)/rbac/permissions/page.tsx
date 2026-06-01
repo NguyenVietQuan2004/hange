@@ -120,7 +120,6 @@ export default function PermissionTab() {
           Create New Permission
         </button>
       </div>
-
       {/* LIST - Accordion */}
       {loading ? (
         <p className="text-center py-10">Loading permissions...</p>
@@ -137,44 +136,48 @@ export default function PermissionTab() {
                 >
                   <div className="flex items-center gap-3">
                     {isExpanded ? (
-                      <ChevronDown className="w-5 h-5 text-primary" />
+                      <ChevronDown className="w-5 h-5 text-primary transition-transform duration-300" />
                     ) : (
-                      <ChevronRight className="w-5 h-5" />
+                      <ChevronRight className="w-5 h-5 transition-transform duration-300" />
                     )}
-                    <h3 className="font-semibold  text-primary">{module}</h3>
+                    <h3 className="font-semibold text-primary">{module}</h3>
                   </div>
-                  <span className="  text-muted-foreground bg-muted px-3 py-1 rounded-full">
+                  <span className="text-muted-foreground bg-muted px-3 py-1 rounded-full">
                     {items.length} permissions
                   </span>
                 </button>
 
-                {/* Content */}
-                {isExpanded && (
-                  <div className="px-6 pb-6 space-y-3">
+                {/* Content with Slide Animation */}
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    isExpanded ? "max-h-300 opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <div className="px-6 pb-6 space-y-3 pt-2">
                     {items.map((p, index) => (
                       <div
                         key={p.id}
-                        className="flex overflow-hidden flex-col md:flex-row justify-between items-start gap-1 md:items-center border border-border rounded-lg px-4 py-3 hover:bg-accent/50 transition"
+                        className="flex  overflow-hidden flex-col md:flex-row justify-between items-start gap-1 md:items-center border border-border rounded-lg px-4 py-3 hover:bg-accent/50 transition"
                       >
-                        <div>
+                        {" "}
+                        <div className="">
                           <div className="font-medium">
                             {index + 1}. {p.name}
                           </div>
-                          <div className="  text-muted-foreground mt-1.5 flex items-start md:items-center gap-1 ">
-                            <span className="font-mono bg-muted px-2 py-0.5 rounded">{p.method}</span> {p.apiPath}
+                          <div className="text-muted-foreground mt-1.5 flex items-start md:items-center gap-1">
+                            <span className="font-mono bg-muted px-2 py-0.5 rounded shrink-0  border-border border ">
+                              {p.method}
+                            </span>{" "}
+                            <span className="truncate max-w-45">{p.apiPath}</span>
                           </div>
                         </div>
-
-                        <div className="flex gap-1 self-center">
-                          <button
-                            onClick={() => onEdit(p)}
-                            className="px-2 py-2    rounded-lg hover:bg-accent transition"
-                          >
+                        <div className="flex gap-0 self-center min-w-0">
+                          <button onClick={() => onEdit(p)} className="px-2 py-2 rounded-lg hover:bg-accent transition">
                             <Pencil size={18} />
                           </button>
                           <button
                             onClick={() => setDeleteId(p.id)}
-                            className="px-2 py-2   text-red-500  rounded-lg hover:bg-red-50 transition"
+                            className="px-2 py-2 text-red-500 rounded-lg hover:bg-red-50 transition"
                           >
                             <Trash2 size={18} />
                           </button>
@@ -182,7 +185,7 @@ export default function PermissionTab() {
                       </div>
                     ))}
                   </div>
-                )}
+                </div>
               </div>
             );
           })}
@@ -191,9 +194,8 @@ export default function PermissionTab() {
             <p className="text-center text-muted-foreground py-10">No permissions found.</p>
           )}
         </div>
-      )}
-
-      {/* ================= CREATE / EDIT MODAL ================= */}
+      )}{" "}
+      {/* Modals giữ nguyên */}
       {showFormModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md mx-4">
@@ -206,16 +208,14 @@ export default function PermissionTab() {
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
-
               <input
                 className="w-full px-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="API Path (e.g. /api/users)"
                 value={form.apiPath}
                 onChange={(e) => setForm({ ...form, apiPath: e.target.value })}
               />
-
               <select
-                className="w-full  dark:bg-card  px-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full dark:bg-card px-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
                 value={form.method}
                 onChange={(e) => setForm({ ...form, method: e.target.value })}
               >
@@ -224,7 +224,6 @@ export default function PermissionTab() {
                 <option>PUT</option>
                 <option>DELETE</option>
               </select>
-
               <input
                 className="w-full px-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="Module (e.g. User, Role, ...)"
@@ -254,8 +253,6 @@ export default function PermissionTab() {
           </div>
         </div>
       )}
-
-      {/* ================= DELETE CONFIRM MODAL ================= */}
       {deleteId && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="bg-card border border-border rounded-2xl p-6 w-85">

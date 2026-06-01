@@ -5,8 +5,8 @@ import type { MiddlewareConfig, NextRequest } from "next/server";
 
 const ROUTES = {
   AUTH: ["/login", "/register"],
-  PRIVATE: ["/private", "/change-password", "/me", "/role"],
-  ADMIN: ["/role"],
+  PRIVATE: ["/private", "/change-password", "/me", "/rbac"],
+  ADMIN: ["/rbac"],
 };
 
 type JWTPayload = {

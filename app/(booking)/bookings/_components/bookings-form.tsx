@@ -214,7 +214,7 @@ export default function CreateBookingPage() {
                   Book Another Appointment
                 </button>
                 <button
-                  onClick={() => router.push("/bookings/me")}
+                  onClick={() => router.push("/my-bookings")}
                   className="rounded-lg bg-primary px-6 py-2 font-medium text-primary-foreground transition hover:opacity-90"
                 >
                   View My Appointments

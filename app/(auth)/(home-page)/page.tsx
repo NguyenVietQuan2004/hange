@@ -13,9 +13,9 @@ export default function HomePage() {
         <div className="min-h-screen bg-background text-foreground transition-colors">
           {/* HERO */}
 
-          <div className="mt-20">
+          {/* <div className="mt-20">
             <CreateBookingPage />
-          </div>
+          </div> */}
 
           <section className="px-6 md:px-10 pt-20 pb-14 border-b border-border">
             <div className="max-w-7xl mx-auto">

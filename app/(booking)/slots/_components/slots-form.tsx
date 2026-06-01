@@ -82,7 +82,7 @@ export default function CreateSlotBookingPage() {
         note,
       });
 
-      router.push("/bookings/me");
+      router.push("/my-bookings");
     } finally {
       setLoading(false);
     }
