@@ -4,7 +4,7 @@ import { ShieldCheck, Users, Lock, Activity, ArrowRight, Database, Globe, Bell }
 
 import HeaderLayout from "@/components/layout/header-layout";
 import FooterLayout from "@/components/layout/footer-layout";
-import CreateBookingPage from "@/app/(booking)/bookings/_components/bookings-form";
+import CreateBookingPage from "@/app/admin/(booking)/bookings/_components/bookings-form";
 
 export default function HomePage() {
   return (
@@ -12,10 +12,6 @@ export default function HomePage() {
       <FooterLayout>
         <div className="min-h-screen bg-background text-foreground transition-colors">
           {/* HERO */}
-
-          {/* <div className="mt-20">
-            <CreateBookingPage />
-          </div> */}
 
           <section className="px-6 md:px-10 pt-20 pb-14 border-b border-border">
             <div className="max-w-7xl mx-auto">

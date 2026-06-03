@@ -85,7 +85,6 @@ export const API_URL = {
     UPDATE: (id: number) => api(`/services/${id}`),
     DELETE: (id: number) => api(`/services/${id}`),
   },
-
   LOCATION: {
     BASE: api("/locations"),
 
@@ -131,9 +130,23 @@ export const API_URL = {
 
   SERVICE_SLOT: {
     BASE: api("/service-slots"),
+    GET_ALL: (params?: { serviceId?: number; locationId?: number; slotDate?: string }) =>
+      api(
+        `/service-slots?${new URLSearchParams({
+          ...(params?.serviceId !== undefined && {
+            serviceId: params.serviceId.toString(),
+          }),
+          ...(params?.locationId !== undefined && {
+            locationId: params.locationId.toString(),
+          }),
+          ...(params?.slotDate && {
+            slotDate: params.slotDate,
+          }),
+        }).toString()}`,
+      ),
 
-    GET_ALL: api("/service-slots"),
     GET_BY_ID: (id: number) => api(`/service-slots/${id}`),
+    GET_LOCATIONS_BY_SERVICE: (serviceId: number) => api(`/service-slots/service/${serviceId}/locations`),
 
     GET_BY_SERVICE: (serviceId: number) => api(`/service-slots/service/${serviceId}`),
 

@@ -6,12 +6,17 @@ import {
   UpdateServiceSlotRequest,
   BulkCreateServiceSlotRequest,
 } from "@/types/booking/service-slot-type";
+import { LocationDTO } from "@/types/booking/location-type";
 
 export const serviceSlotService = {
   /* ================= GET ================= */
 
-  getAll: async () => {
-    return api.get<ServiceSlotDTO[]>(API_URL.SERVICE_SLOT.GET_ALL);
+  // getAll: async () => {
+  //   return api.get<ServiceSlotDTO[]>(API_URL.SERVICE_SLOT.GET_ALL);
+  // },
+
+  getAll: async (params?: { serviceId?: number; locationId?: number; slotDate?: string }) => {
+    return api.get<ServiceSlotDTO[]>(API_URL.SERVICE_SLOT.GET_ALL(params));
   },
 
   getById: async (id: number) => {
@@ -48,5 +53,9 @@ export const serviceSlotService = {
 
   remove: async (id: number) => {
     return api.delete<string>(API_URL.SERVICE_SLOT.DELETE(id));
+  },
+
+  getLocationsByService: async (serviceId: number) => {
+    return api.get<LocationDTO[]>(API_URL.SERVICE_SLOT.GET_LOCATIONS_BY_SERVICE(serviceId));
   },
 };

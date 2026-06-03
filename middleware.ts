@@ -5,8 +5,8 @@ import type { MiddlewareConfig, NextRequest } from "next/server";
 
 const ROUTES = {
   AUTH: ["/login", "/register"],
-  PRIVATE: ["/private", "/change-password", "/me", "/rbac"],
-  ADMIN: ["/rbac"],
+  PRIVATE: ["/change-password", "/me", "/admin"],
+  ADMIN: ["/admin"],
 };
 
 type JWTPayload = {
@@ -22,11 +22,12 @@ export async function middleware(request: NextRequest) {
 
   console.log(">>> Vào middleware với pathname: ", pathname);
 
-  if (ROUTES.AUTH.includes(pathname) && refreshToken) {
+  // if (ROUTES.AUTH.startsWith(pathname) && refreshToken) {
+  if (ROUTES.AUTH.find((route) => pathname.startsWith(route)) && refreshToken) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (ROUTES.PRIVATE.includes(pathname)) {
+  if (ROUTES.PRIVATE.find((route) => pathname.startsWith(route))) {
     console.log(">>> Private route: ", pathname);
     // TODO: Case 1: Access hết hạn cần refresh thì refresh ngay (Trường hợp đang dùng website mà hết hạn)
     if (refreshToken && !accessToken) {
@@ -65,7 +66,7 @@ export async function middleware(request: NextRequest) {
         console.log(">>> Case 3.2: Access token gần hết hạn >>> Làm mới token");
         return await refreshTokenMiddleware(request, pathname);
       }
-      if (ROUTES.ADMIN.includes(pathname)) {
+      if (ROUTES.ADMIN.find((route) => pathname.startsWith(route))) {
         console.log(">>> Admin route detected 1:", pathname);
         if (!isAdmin(payload)) {
           return NextResponse.redirect(new URL("/", request.url));
@@ -103,7 +104,7 @@ const refreshTokenMiddleware = async (request: NextRequest, pathname: string) =>
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } = json.data;
     console.log(">>> Middleware Refresh token thành công", newAccessToken.slice(-5), newRefreshToken.slice(-5));
     const newPayload = decodeToken(newAccessToken) as JWTPayload;
-    if (ROUTES.ADMIN.includes(pathname)) {
+    if (ROUTES.ADMIN.find((route) => pathname.startsWith(route))) {
       console.log(">>> Admin route detected 2:", pathname);
       if (!isAdmin(newPayload)) {
         return NextResponse.redirect(new URL("/", request.url));
@@ -159,12 +160,12 @@ const isAdmin = (payload: JWTPayload | null) => {
   if (!payload) return false;
   const roles = payload.roles || payload.role;
   if (Array.isArray(roles)) {
-    return roles.includes("ADMIN");
+    return roles.includes("ADMIN") || roles.includes("ROLE_ADMIN");
   }
   if (typeof roles === "string") {
-    return roles.split(" ").includes("ADMIN");
+    const roleList = roles.split(" ");
+    return roleList.includes("ADMIN") || roleList.includes("ROLE_ADMIN");
   }
-
   return false;
 };
 
