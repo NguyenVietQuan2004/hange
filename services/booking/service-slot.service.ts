@@ -5,18 +5,16 @@ import {
   CreateServiceSlotRequest,
   UpdateServiceSlotRequest,
   BulkCreateServiceSlotRequest,
+  SlotQueryParams,
 } from "@/types/booking/service-slot-type";
 import { LocationDTO } from "@/types/booking/location-type";
+import { PageResponse } from "@/types/page-response";
 
 export const serviceSlotService = {
   /* ================= GET ================= */
 
-  // getAll: async () => {
-  //   return api.get<ServiceSlotDTO[]>(API_URL.SERVICE_SLOT.GET_ALL);
-  // },
-
-  getAll: async (params?: { serviceId?: number; locationId?: number; slotDate?: string }) => {
-    return api.get<ServiceSlotDTO[]>(API_URL.SERVICE_SLOT.GET_ALL(params));
+  getAll: async (params?: SlotQueryParams) => {
+    return api.get<PageResponse<ServiceSlotDTO>>(API_URL.SERVICE_SLOT.GET_ALL(params));
   },
 
   getById: async (id: number) => {

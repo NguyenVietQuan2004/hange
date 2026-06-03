@@ -1,5 +1,6 @@
 import { ApiResponse } from "@/services/http-service-client";
 import { UserDTO } from "../user-type";
+import { PageResponse } from "../page-response";
 
 /* =================================================
    ENUM STATUS (MATCH BACKEND BookingStatus)
@@ -49,7 +50,7 @@ export type BookingDTO = {
    RESPONSE WRAPPERS
 ================================================= */
 
-export type BookingListResponse = ApiResponse<BookingDTO[]>;
+export type BookingListResponse = ApiResponse<PageResponse<BookingDTO>>;
 export type BookingResponse = ApiResponse<BookingDTO>;
 export type DeleteBookingResponse = ApiResponse<string>;
 
@@ -58,8 +59,6 @@ export type DeleteBookingResponse = ApiResponse<string>;
 ================================================= */
 
 export type BookingQueryParams = {
-  userId?: number;
-  status?: BookingStatus;
   page?: number;
   size?: number;
   sort?: string;

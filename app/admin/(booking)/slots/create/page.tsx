@@ -316,9 +316,10 @@ export default function CreateServiceSlotPage() {
   const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string } | null>(null);
 
   // Load initial data
+  // tối ưu chỗ này
   useEffect(() => {
     const loadInitialData = async () => {
-      const [servicesData, slotsData, locationsData] = await Promise.all([
+      const [servicesData, { content: slotsData }, locationsData] = await Promise.all([
         serviceService.getAll(),
         serviceSlotService.getAll(),
         locationService.getAll(),

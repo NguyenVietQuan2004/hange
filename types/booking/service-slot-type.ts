@@ -78,3 +78,12 @@ export type BulkCreateServiceSlotRequest = {
 export type ServiceSlotListResponse = ApiResponse<ServiceSlotDTO[]>;
 export type ServiceSlotResponse = ApiResponse<ServiceSlotDTO>;
 export type DeleteServiceSlotResponse = ApiResponse<string>;
+
+export type SlotQueryParams = {
+  serviceId?: number;
+  locationId?: number;
+  slotDate?: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+};

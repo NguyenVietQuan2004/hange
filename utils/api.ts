@@ -1,4 +1,7 @@
 import { ENV_CONFIG } from "@/config/env";
+import { PermissionQueryParams } from "@/types/auth/role-type";
+import { BookingQueryParams } from "@/types/booking/booking-type";
+import { SlotQueryParams } from "@/types/booking/service-slot-type";
 
 const api = (path: string) => `${ENV_CONFIG.API_URL}${path}`;
 
@@ -38,7 +41,24 @@ export const API_URL = {
   PERMISSION: {
     BASE: api("/permissions"),
     // GET_ALL: api("/permissions?page=1&size=5&sort=name,desc&keyword=u"), // cac cai con lai la exact
-    GET_ALL: api("/permissions"), // cac cai con lai la exact
+    GET_ALL: (params?: PermissionQueryParams) =>
+      api(
+        `/permissions?${new URLSearchParams({
+          ...(params?.keyword && { keyword: params.keyword }),
+          ...(params?.module && { module: params.module }),
+          ...(params?.method && { method: params.method }),
+          ...(params?.apiPath && { apiPath: params.apiPath }),
+          ...(params?.page !== undefined && {
+            page: params.page.toString(),
+          }),
+          ...(params?.size !== undefined && {
+            size: params.size.toString(),
+          }),
+          ...(params?.sort && {
+            sort: params.sort,
+          }),
+        }).toString()}`,
+      ),
     //     GET /api/v1/permissions?
     // keyword=user&
     // module=AUTH&
@@ -118,7 +138,20 @@ export const API_URL = {
 
     CREATE: api("/bookings"),
 
-    GET_ALL: api("/bookings"),
+    GET_ALL: (params?: BookingQueryParams) =>
+      api(
+        `/bookings?${new URLSearchParams({
+          ...(params?.page !== undefined && {
+            page: params.page.toString(),
+          }),
+          ...(params?.size !== undefined && {
+            size: params.size.toString(),
+          }),
+          ...(params?.sort && {
+            sort: params.sort,
+          }),
+        }).toString()}`,
+      ),
     GET_BY_ID: (id: number) => api(`/bookings/${id}`),
 
     MY_BOOKINGS: api("/bookings/me"),
@@ -130,7 +163,7 @@ export const API_URL = {
 
   SERVICE_SLOT: {
     BASE: api("/service-slots"),
-    GET_ALL: (params?: { serviceId?: number; locationId?: number; slotDate?: string }) =>
+    GET_ALL: (params?: SlotQueryParams) =>
       api(
         `/service-slots?${new URLSearchParams({
           ...(params?.serviceId !== undefined && {
@@ -141,6 +174,15 @@ export const API_URL = {
           }),
           ...(params?.slotDate && {
             slotDate: params.slotDate,
+          }),
+          ...(params?.page !== undefined && {
+            page: params.page.toString(),
+          }),
+          ...(params?.size !== undefined && {
+            size: params.size.toString(),
+          }),
+          ...(params?.sort && {
+            sort: params.sort,
           }),
         }).toString()}`,
       ),

@@ -28,7 +28,7 @@ export default function RoleTab() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [r, p] = await Promise.all([roleService.getAll(), permissionService.getAll()]);
+      const [r, { content: p }] = await Promise.all([roleService.getAll(), permissionService.getAll()]);
       setRoles(r);
       setPermissions(p);
     } catch (err) {

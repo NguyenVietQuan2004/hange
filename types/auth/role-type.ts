@@ -6,6 +6,15 @@ export type Permission = {
   module: string;
 };
 
+export type PermissionQueryParams = {
+  keyword?: string;
+  module?: string;
+  method?: string;
+  apiPath?: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+};
 export type Role = {
   id: number;
   name: string;

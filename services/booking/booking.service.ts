@@ -1,6 +1,12 @@
 import { api } from "@/services/http-service-client";
 import { API_URL } from "@/utils/api";
-import { BookingDTO, CreateBookingRequest } from "@/types/booking/booking-type";
+import {
+  BookingDTO,
+  BookingListResponse,
+  BookingQueryParams,
+  CreateBookingRequest,
+} from "@/types/booking/booking-type";
+import { PageResponse } from "@/types/page-response";
 
 export const bookingService = {
   /* ================= CREATE ================= */
@@ -13,8 +19,8 @@ export const bookingService = {
 
   /* ================= GET ================= */
 
-  getAll: async () => {
-    return api.get<BookingDTO[]>(API_URL.BOOKING.GET_ALL);
+  getAll: async (params?: BookingQueryParams) => {
+    return api.get<PageResponse<BookingDTO>>(API_URL.BOOKING.GET_ALL(params));
   },
 
   getById: async (id: number) => {

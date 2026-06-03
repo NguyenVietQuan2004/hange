@@ -27,7 +27,7 @@ export default function PermissionTab() {
     try {
       setLoading(true);
       const res = await permissionService.getAll();
-      setList(res);
+      setList(res.content);
     } catch (err) {
       console.error(err);
     } finally {
