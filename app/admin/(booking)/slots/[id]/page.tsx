@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
@@ -42,12 +43,15 @@ import { ServiceDTO } from "@/types/booking/service-type";
 import { LocationDTO } from "@/types/booking/location-type";
 import { ServiceSlotDTO, UpdateServiceSlotRequest, CreateServiceSlotRequest } from "@/types/booking/service-slot-type";
 import { PageResponse } from "@/types/page-response";
+import ConfirmModal from "@/components/confirm-modal";
 
 const PAGE_SIZE = 20;
 
 export default function ManageServiceSlotsPage() {
   const router = useRouter();
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
+  const [deleteLoading, setDeleteLoading] = useState(false);
   // Data states
   const [services, setServices] = useState<ServiceDTO[]>([]);
   const [locations, setLocations] = useState<LocationDTO[]>([]);
@@ -80,14 +84,25 @@ export default function ManageServiceSlotsPage() {
 
   /* ================= LOAD INITIAL DATA ================= */
   useEffect(() => {
-    serviceService.getAll().then(setServices);
-    locationService.getAll().then(setLocations);
+    const loadInitialData = async () => {
+      try {
+        const [servicesData, locationsData] = await Promise.all([serviceService.getAll(), locationService.getAll()]);
+
+        setServices(servicesData);
+        setLocations(locationsData);
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to load initial data");
+      }
+    };
+
+    loadInitialData();
   }, []);
 
   /* ================= LOAD SLOTS FROM BACKEND ================= */
   const loadSlots = async (page: number = 1) => {
     if (!selectedServiceId || !selectedLocationId) {
-      alert("Please select Service and Center");
+      toast.warning("Please select a service and center");
       return;
     }
 
@@ -109,6 +124,7 @@ export default function ManageServiceSlotsPage() {
       setExpandedDates(new Set());
     } catch (error) {
       console.error("Load slots failed:", error);
+      toast.error("Failed to load slots");
       setPageData(null);
     } finally {
       setLoading(false);
@@ -151,14 +167,15 @@ export default function ManageServiceSlotsPage() {
       await serviceSlotService.update(slotId, payload);
       loadSlots(currentPage);
     } catch (err) {
-      alert("Update failed");
+      console.error(err);
+      toast.error("Failed to update slot");
     }
   };
 
   const saveNewSlot = async (index: number) => {
     const slot = slots[index];
     if (!slot.slotDate || !slot.startTime || !slot.endTime) {
-      alert("Please fill in Date, Start Time and End Time");
+      toast.warning("Please fill in date, start time, and end time");
       return;
     }
 
@@ -173,24 +190,48 @@ export default function ManageServiceSlotsPage() {
       };
 
       await serviceSlotService.create(payload);
-      alert("New slot created successfully!");
+      toast.success("Slot created successfully");
 
       // Remove from newSlots and reload
       setNewSlots((prev) => prev.filter((_, i) => i !== index - backendSlots.length));
       loadSlots(currentPage);
     } catch (err) {
-      alert("Failed to create slot");
+      console.error(err);
+      toast.error("Failed to create slot");
     }
   };
 
-  const deleteSlot = async (slotId: number) => {
-    if (!confirm("Are you sure you want to delete this slot?")) return;
+  // const deleteSlot = async (slotId: number) => {
+  //   if (!confirm("Are you sure you want to delete this slot?")) return;
+
+  //   try {
+  //     await serviceSlotService.remove(slotId);
+  //     loadSlots(currentPage);
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast.error("Failed to delete slot");
+  //   }
+  // };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
 
     try {
-      await serviceSlotService.remove(slotId);
+      setDeleteLoading(true);
+
+      await serviceSlotService.remove(deleteId);
+
+      toast.success("Slot deleted successfully");
+
+      setDeleteId(null);
+
       loadSlots(currentPage);
-    } catch (err) {
-      alert("Delete failed");
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Failed to delete slot");
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -415,7 +456,7 @@ export default function ManageServiceSlotsPage() {
                                                   <CalendarIcon className="mr-2 h-4 w-4" />
                                                   {slot.slotDate
                                                     ? format(new Date(slot.slotDate), "dd/MM/yyyy")
-                                                    : "Chọn ngày"}
+                                                    : "Select date"}
                                                 </Button>
                                               </PopoverTrigger>
                                               <PopoverContent className="w-auto p-0" align="start">
@@ -506,7 +547,7 @@ export default function ManageServiceSlotsPage() {
                                             <Button
                                               variant="ghost"
                                               size="icon"
-                                              onClick={() => deleteSlot(slot.id)}
+                                              onClick={() => setDeleteId(slot.id)}
                                               className="h-10 w-10 text-red-600 hover:bg-red-50 hover:text-red-700 flex-shrink-0"
                                             >
                                               <Trash2 size={20} />
@@ -637,6 +678,18 @@ export default function ManageServiceSlotsPage() {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        open={!!deleteId}
+        variant="danger"
+        loading={deleteLoading}
+        title="Delete Slot"
+        description="Are you sure you want to delete this slot? This action cannot be undone."
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
+        onCancel={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+      />
     </main>
   );
 }

@@ -7,7 +7,7 @@ import { Check, X, Eye, User } from "lucide-react";
 import { bookingService } from "@/services/booking/booking.service";
 import { BookingDTO } from "@/types/booking/booking-type";
 import { PageResponse } from "@/types/page-response";
-
+import { toast } from "sonner";
 const ITEMS_PER_PAGE = 10; // Bạn có thể thay đổi số lượng hiển thị mỗi trang
 
 export default function BookingsPage() {
@@ -16,37 +16,76 @@ export default function BookingsPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Fetch data với phân trang từ backend
+  // const fetchData = async (page: number) => {
+  //   try {
+  //     setLoading(true);
+
+  //     const response = await bookingService.getAll({
+  //       page: page - 1, // Backend thường dùng 0-based
+  //       size: ITEMS_PER_PAGE,
+  //       // sort: "createdAt,desc" // Nếu muốn sort có thể mở comment
+  //     });
+
+  //     setPageData(response);
+  //   } catch (err) {
+  //     console.error("Failed to fetch bookings:", err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchData = async (page: number) => {
     try {
       setLoading(true);
 
       const response = await bookingService.getAll({
-        page: page - 1, // Backend thường dùng 0-based
+        page: page - 1,
         size: ITEMS_PER_PAGE,
-        // sort: "createdAt,desc" // Nếu muốn sort có thể mở comment
       });
 
       setPageData(response);
     } catch (err) {
       console.error("Failed to fetch bookings:", err);
+      toast.error("Failed to load bookings.");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleConfirm = async (id: number) => {
+    try {
+      await bookingService.confirm(id);
+      toast.success("Booking confirmed successfully.");
+      fetchData(currentPage);
+    } catch (error) {
+      console.error("Confirm booking failed:", error);
+      toast.error("Failed to confirm booking.");
+    }
+  };
+
+  const handleReject = async (id: number) => {
+    try {
+      await bookingService.reject(id);
+      toast.success("Booking rejected successfully.");
+      fetchData(currentPage);
+    } catch (error) {
+      console.error("Reject booking failed:", error);
+      toast.error("Failed to reject booking.");
+    }
+  };
   useEffect(() => {
     fetchData(currentPage);
   }, [currentPage]);
 
-  const handleConfirm = async (id: number) => {
-    await bookingService.confirm(id);
-    fetchData(currentPage); // Refresh trang hiện tại
-  };
+  // const handleConfirm = async (id: number) => {
+  //   await bookingService.confirm(id);
+  //   fetchData(currentPage); // Refresh trang hiện tại
+  // };
 
-  const handleReject = async (id: number) => {
-    await bookingService.reject(id);
-    fetchData(currentPage);
-  };
+  // const handleReject = async (id: number) => {
+  //   await bookingService.reject(id);
+  //   fetchData(currentPage);
+  // };
 
   const canUpdate = (status: string) => status === "PENDING";
 
@@ -93,13 +132,13 @@ export default function BookingsPage() {
               {loading ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">
-                    Đang tải dữ liệu...
+                    Loading bookings..
                   </td>
                 </tr>
               ) : bookings.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">
-                    Không có booking nào
+                    No bookings found
                   </td>
                 </tr>
               ) : (

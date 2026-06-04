@@ -16,7 +16,7 @@ import {
   Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -52,7 +52,6 @@ export default function ServiceSlotsPage() {
   const [pageData, setPageData] = useState<PageResponse<ServiceSlotDTO> | null>(null);
 
   // UI states
-  const [loadingServices, setLoadingServices] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -65,14 +64,18 @@ export default function ServiceSlotsPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Dialog
-  const [deletingSlotId, setDeletingSlotId] = useState<number | null>(null);
 
   /* ================= LOAD SERVICES ================= */
   useEffect(() => {
-    serviceService.getAll().then((data) => {
-      setServices(data);
-      setLoadingServices(false);
-    });
+    serviceService
+      .getAll()
+      .then((data) => {
+        setServices(data);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("Failed to load services");
+      });
   }, []);
 
   /* ================= LOAD LOCATIONS WHEN SERVICE CHANGES ================= */
@@ -86,10 +89,12 @@ export default function ServiceSlotsPage() {
     const loadLocations = async () => {
       try {
         const data = await serviceSlotService.getLocationsByService(Number(selectedServiceId));
+
         setLocations(data);
         setSelectedLocationId("");
       } catch (error) {
         console.error(error);
+        toast.error("Failed to load locations");
       }
     };
 
@@ -99,7 +104,7 @@ export default function ServiceSlotsPage() {
   /* ================= SEARCH WITH PAGINATION ================= */
   const handleSearch = async (page: number = 1) => {
     if (!selectedServiceId || !selectedLocationId) {
-      alert("Vui lòng chọn Service và Center");
+      toast.error("Please select a service and location");
       return;
     }
 
@@ -119,6 +124,7 @@ export default function ServiceSlotsPage() {
       setPageData({ content, ...paginationInfo });
     } catch (error) {
       console.error("Search failed:", error);
+      toast.error("Failed to load slots");
       setPageData(null);
     } finally {
       setIsLoading(false);

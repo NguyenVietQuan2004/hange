@@ -11,7 +11,7 @@ import { serviceService } from "@/services/booking/service.service";
 import { ServiceDTO } from "@/types/booking/service-type";
 
 import ConfirmModal from "@/components/confirm-modal";
-
+import { toast } from "sonner";
 const ITEMS_PER_PAGE = 10;
 
 export default function ServicesPage() {
@@ -38,6 +38,8 @@ export default function ServicesPage() {
       setServices(data);
     } catch (error) {
       console.error(error);
+
+      toast.error("Failed to load services.");
     } finally {
       setLoading(false);
     }
@@ -53,16 +55,17 @@ export default function ServicesPage() {
 
       setServices((prev) => prev.filter((item) => item.id !== deleteId));
 
+      toast.success("Service deleted successfully.");
+
       setDeleteId(null);
     } catch (error) {
       console.error(error);
 
-      alert("Delete failed");
+      toast.error("Failed to delete service.");
     } finally {
       setDeleteLoading(false);
     }
   };
-
   const totalPages = Math.ceil(services.length / ITEMS_PER_PAGE);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;

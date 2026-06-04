@@ -1,7 +1,7 @@
 // app/(admin)/locations/[slug]/page.tsx
 
 "use client";
-
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
 import { useParams } from "next/navigation";
@@ -32,6 +32,8 @@ export default function LocationDetailPage() {
       setLocation(data);
     } catch (error) {
       console.error(error);
+
+      toast.error("Failed to delete location.");
     } finally {
       setLoading(false);
     }

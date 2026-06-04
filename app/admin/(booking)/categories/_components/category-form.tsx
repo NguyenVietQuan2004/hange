@@ -132,6 +132,60 @@ export default function CategoryForm({ mode, initialData }: Props) {
   };
 
   const onSubmit = async (data: FormValues) => {
+    // try {
+    //   setLoading(true);
+
+    //   const uploadedImages: ImageDTO[] = (
+    //     await Promise.all(
+    //       imageForms.map(async (img): Promise<ImageDTO | null> => {
+    //         let imageUrl = img.url;
+
+    //         if (!img.file && !img.url) return null;
+
+    //         if (img.file) {
+    //           const uploadRes = await systemService.uploadFile({
+    //             file: img.file,
+    //             folder: "category",
+    //           });
+
+    //           imageUrl = uploadRes.filename;
+    //         }
+
+    //         if (!imageUrl) return null;
+
+    //         return {
+    //           url: imageUrl,
+    //           description: img.description,
+    //         };
+    //       }),
+    //     )
+    //   ).filter((img): img is ImageDTO => img !== null);
+
+    //   const payload: CreateCategoryRequest | UpdateCategoryRequest = {
+    //     ...data,
+
+    //     images: uploadedImages,
+    //   };
+
+    //   if (mode === "create") {
+    //     await categoryService.create(payload as CreateCategoryRequest);
+
+    //     toast.success("Create category success");
+    //   } else {
+    //     await categoryService.update(initialData!.id, payload as UpdateCategoryRequest);
+
+    //     toast.success("Update category success");
+    //   }
+
+    //   router.push("/admin/categories");
+    // } catch (error) {
+    //   console.error(error);
+
+    //   toast.error(mode === "create" ? "Create failed" : "Update failed");
+    // } finally {
+    //   setLoading(false);
+    // }
+
     try {
       setLoading(true);
 
@@ -163,25 +217,24 @@ export default function CategoryForm({ mode, initialData }: Props) {
 
       const payload: CreateCategoryRequest | UpdateCategoryRequest = {
         ...data,
-
         images: uploadedImages,
       };
 
       if (mode === "create") {
         await categoryService.create(payload as CreateCategoryRequest);
 
-        toast.success("Create category success");
+        toast.success("Category created successfully.");
       } else {
         await categoryService.update(initialData!.id, payload as UpdateCategoryRequest);
 
-        toast.success("Update category success");
+        toast.success("Category updated successfully.");
       }
 
       router.push("/admin/categories");
     } catch (error) {
       console.error(error);
 
-      toast.error(mode === "create" ? "Create failed" : "Update failed");
+      toast.error(mode === "create" ? "Failed to create category." : "Failed to update category.");
     } finally {
       setLoading(false);
     }

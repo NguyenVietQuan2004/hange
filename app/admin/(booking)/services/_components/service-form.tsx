@@ -29,7 +29,6 @@ export default function ServiceForm({ mode, initialData }: Props) {
   const [imageForms, setImageForms] = useState<ImageFormType[]>(
     initialData?.images?.map((img) => ({ url: img.url, description: img.description, preview: img.url })) || [],
   );
-  console.log(initialData);
   const {
     register,
     handleSubmit,

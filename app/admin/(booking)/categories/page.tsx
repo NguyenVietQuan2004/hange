@@ -10,7 +10,7 @@ import { categoryService } from "@/services/booking/category.service";
 import { CategoryDTO } from "@/types/booking/category-type";
 
 import ConfirmModal from "@/components/confirm-modal";
-
+import { toast } from "sonner";
 const ITEMS_PER_PAGE = 10;
 
 export default function CategoriesPage() {
@@ -27,7 +27,6 @@ export default function CategoriesPage() {
   useEffect(() => {
     fetchCategories();
   }, []);
-
   const fetchCategories = async () => {
     try {
       setLoading(true);
@@ -37,6 +36,7 @@ export default function CategoriesPage() {
       setCategories(data);
     } catch (error) {
       console.error(error);
+      toast.error("Failed to load categories.");
     } finally {
       setLoading(false);
     }
@@ -52,16 +52,17 @@ export default function CategoriesPage() {
 
       setCategories((prev) => prev.filter((item) => item.id !== deleteId));
 
+      toast.success("Category deleted successfully.");
+
       setDeleteId(null);
     } catch (error) {
       console.error(error);
 
-      alert("Delete failed");
+      toast.error("Failed to delete category.");
     } finally {
       setDeleteLoading(false);
     }
   };
-
   const totalPages = Math.ceil(categories.length / ITEMS_PER_PAGE);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;

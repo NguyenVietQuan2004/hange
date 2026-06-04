@@ -1,5 +1,5 @@
 "use client";
-
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
@@ -26,14 +26,22 @@ export default function BookingDetailPage() {
       setLoading(true);
       const data = await bookingService.getById(id);
       setBooking(data);
+    } catch (error) {
+      console.error("Failed to load booking:", error);
+      toast.error("Failed to load booking.");
     } finally {
       setLoading(false);
     }
   };
 
   const refresh = async () => {
-    const data = await bookingService.getById(id);
-    setBooking(data);
+    try {
+      const data = await bookingService.getById(id);
+      setBooking(data);
+    } catch (error) {
+      console.error("Failed to refresh booking:", error);
+      toast.error("Failed to refresh booking.");
+    }
   };
 
   if (loading) {
@@ -153,8 +161,14 @@ export default function BookingDetailPage() {
         <div className="flex flex-wrap gap-3">
           <button
             onClick={async () => {
-              await bookingService.confirm(booking.id);
-              refresh();
+              try {
+                await bookingService.confirm(booking.id);
+                toast.success("Booking confirmed successfully.");
+                refresh();
+              } catch (error) {
+                console.error("Confirm booking failed:", error);
+                toast.error("Failed to confirm booking.");
+              }
             }}
             className="flex items-center gap-2 rounded-lg bg-green-600 px-5 py-2.5 text-sm font-medium text-white hover:opacity-90"
           >
@@ -164,8 +178,14 @@ export default function BookingDetailPage() {
 
           <button
             onClick={async () => {
-              await bookingService.reject(booking.id);
-              refresh();
+              try {
+                await bookingService.reject(booking.id);
+                toast.success("Booking rejected successfully.");
+                refresh();
+              } catch (error) {
+                console.error("Reject booking failed:", error);
+                toast.error("Failed to reject booking.");
+              }
             }}
             className="flex items-center gap-2 rounded-lg bg-red-500 px-5 py-2.5 text-sm font-medium text-white hover:opacity-90"
           >
@@ -175,8 +195,14 @@ export default function BookingDetailPage() {
 
           <button
             onClick={async () => {
-              await bookingService.cancel(booking.id);
-              refresh();
+              try {
+                await bookingService.cancel(booking.id);
+                toast.success("Booking cancelled successfully.");
+                refresh();
+              } catch (error) {
+                console.error("Cancel booking failed:", error);
+                toast.error("Failed to cancel booking.");
+              }
             }}
             className="flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-medium hover:bg-accent"
           >

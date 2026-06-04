@@ -1,5 +1,5 @@
 "use client";
-
+import { toast } from "sonner";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
@@ -313,26 +313,32 @@ export default function CreateServiceSlotPage() {
 
   const [loading, setLoading] = useState(false);
   const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string } | null>(null);
-
-  // Load initial data
   useEffect(() => {
     const loadInitialData = async () => {
-      const [servicesData, locationsData] = await Promise.all([serviceService.getAll(), locationService.getAll()]);
+      try {
+        const [servicesData, locationsData] = await Promise.all([serviceService.getAll(), locationService.getAll()]);
 
-      setAllServices(servicesData);
-      setAllLocations(locationsData);
+        setAllServices(servicesData);
+        setAllLocations(locationsData);
 
-      // Lấy danh sách service đã có slot (để lọc)
-      const existingSlots = await serviceSlotService.getAll({ page: 0, size: 9999999 });
-      const servicesWithSlots = new Set(existingSlots.content.map((slot: any) => slot.serviceId));
+        const existingSlots = await serviceSlotService.getAll({
+          page: 0,
+          size: 9999999,
+        });
 
-      const servicesWithoutSlots = servicesData.filter((service) => !servicesWithSlots.has(service.id));
-      setAvailableServices(servicesWithoutSlots);
+        const servicesWithSlots = new Set(existingSlots.content.map((slot: any) => slot.serviceId));
+
+        const servicesWithoutSlots = servicesData.filter((service) => !servicesWithSlots.has(service.id));
+
+        setAvailableServices(servicesWithoutSlots);
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to load initial data");
+      }
     };
 
     loadInitialData();
   }, []);
-
   // Load locations when service changes
   useEffect(() => {
     if (!selectedServiceId) {
@@ -405,27 +411,38 @@ export default function CreateServiceSlotPage() {
         serviceId: Number(selectedServiceId),
         locationIds: selectedLocationIds,
         slotDate: slotDate!.toISOString().split("T")[0],
-        slots: slots.map(({ startTime, endTime, maxCapacity }) => ({ startTime, endTime, maxCapacity })),
+        slots: slots.map(({ startTime, endTime, maxCapacity }) => ({
+          startTime,
+          endTime,
+          maxCapacity,
+        })),
       };
 
       await serviceSlotService.bulkCreate(payload);
 
+      const totalCreated = slots.length * selectedLocationIds.length;
+
+      toast.success(`Successfully created ${totalCreated} slots for ${selectedService?.name}`);
+
       setSubmitResult({
         success: true,
-        message: `Tạo thành công ${slots.length * selectedLocationIds.length} slot cho dịch vụ ${selectedService?.name}`,
+        message: `Successfully created ${totalCreated} slots for ${selectedService?.name}`,
       });
 
       setTimeout(() => router.push("/admin/slots"), 2500);
     } catch (error) {
+      console.error(error);
+
+      toast.error("Failed to create slots");
+
       setSubmitResult({
         success: false,
-        message: "Có lỗi xảy ra khi tạo slot. Vui lòng thử lại.",
+        message: "Failed to create slots. Please try again.",
       });
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <main className="min-h-screen bg-background ">
       <div className="mx-auto">

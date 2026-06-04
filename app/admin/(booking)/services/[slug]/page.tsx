@@ -9,7 +9,7 @@ import { serviceService } from "@/services/booking/service.service";
 import { ServiceDTO } from "@/types/booking/service-type";
 
 import ServiceForm from "../_components/service-form";
-
+import { toast } from "sonner";
 export default function ServiceDetailPage() {
   const params = useParams();
 
@@ -30,6 +30,8 @@ export default function ServiceDetailPage() {
       setService(data);
     } catch (error) {
       console.error(error);
+
+      toast.error("Failed to load services.");
     } finally {
       setLoading(false);
     }
