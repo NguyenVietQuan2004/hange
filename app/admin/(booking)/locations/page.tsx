@@ -14,7 +14,7 @@ import { LocationDTO } from "@/types/booking/location-type";
 
 import ConfirmModal from "@/components/confirm-modal";
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 10;
 
 export default function LocationsPage() {
   const [locations, setLocations] = useState<LocationDTO[]>([]);

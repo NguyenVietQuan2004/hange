@@ -16,9 +16,8 @@ import { Eye, Ban } from "lucide-react";
 
 import { bookingService } from "@/services/booking/booking.service";
 import { BookingDTO } from "@/types/booking/booking-type";
-import CreateBookingPage from "../../admin/(booking)/bookings/_components/bookings-form";
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 10;
 
 export default function MyBookingsPage() {
   const [data, setData] = useState<BookingDTO[]>([]);

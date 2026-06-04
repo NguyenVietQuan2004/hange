@@ -11,7 +11,7 @@ import { CategoryDTO } from "@/types/booking/category-type";
 
 import ConfirmModal from "@/components/confirm-modal";
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 10;
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<CategoryDTO[]>([]);

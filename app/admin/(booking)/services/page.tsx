@@ -12,7 +12,7 @@ import { ServiceDTO } from "@/types/booking/service-type";
 
 import ConfirmModal from "@/components/confirm-modal";
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 10;
 
 export default function ServicesPage() {
   const [services, setServices] = useState<ServiceDTO[]>([]);

@@ -67,7 +67,7 @@ export default function Header() {
                 alt="avatar"
                 width={100}
                 height={100}
-                className="rounded-full w-8 h-8 hover:brightness-95 duration-500"
+                className="rounded-full object-cover w-8 h-8 hover:brightness-95 duration-500"
               />
             </div>
 

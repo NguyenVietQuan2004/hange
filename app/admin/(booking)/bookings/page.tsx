@@ -222,7 +222,7 @@ import { bookingService } from "@/services/booking/booking.service";
 import { BookingDTO } from "@/types/booking/booking-type";
 import { PageResponse } from "@/types/page-response";
 
-const ITEMS_PER_PAGE = 1; // Bạn có thể thay đổi số lượng hiển thị mỗi trang
+const ITEMS_PER_PAGE = 10; // Bạn có thể thay đổi số lượng hiển thị mỗi trang
 
 export default function BookingsPage() {
   const [pageData, setPageData] = useState<PageResponse<BookingDTO> | null>(null);
@@ -293,13 +293,13 @@ export default function BookingsPage() {
           <table className="w-full">
             <thead className="border-b border-border bg-muted/50">
               <tr>
-                <th className="px-6 py-3 text-left font-semibold">#</th>
-                <th className="px-3 py-3 text-left font-semibold">Service</th>
-                <th className="px-3 py-3 text-left font-semibold">Location</th>
-                <th className="px-6 py-3 text-left font-semibold">User</th>
-                <th className="px-6 py-3 text-left font-semibold">Status</th>
-                <th className="px-6 py-3 text-left font-semibold">Created At</th>
-                <th className="px-6 py-3 text-center font-semibold">Actions</th>
+                <th className="px-5 py-1.5 text-left font-semibold">#</th>
+                <th className="px-3 py-1.5 text-left font-semibold">Service</th>
+                <th className="px-3 py-1.5 text-left font-semibold">Location</th>
+                <th className="px-5 py-1.5 text-left font-semibold">User</th>
+                <th className="px-5 py-1.5 text-left font-semibold">Status</th>
+                <th className="px-5 py-1.5 text-left font-semibold">Created At</th>
+                <th className="px-5 py-1.5 text-center font-semibold">Actions</th>
               </tr>
             </thead>
 
@@ -319,15 +319,15 @@ export default function BookingsPage() {
               ) : (
                 bookings.map((b, index) => (
                   <tr key={b.id} className="border-t border-border hover:bg-accent/40">
-                    <td className="px-6 py-3 text-muted-foreground">
+                    <td className="px-3 py-1.5 text-muted-foreground">
                       {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
                     </td>
 
-                    <td className="px-3 py-3 max-w-40 truncate font-medium text-muted-foreground">{b.serviceName}</td>
+                    <td className="px-3 py-1.5 max-w-40 truncate font-medium text-muted-foreground">{b.serviceName}</td>
 
-                    <td className="px-3 py-3 max-w-40 truncate text-muted-foreground">{b.locationName || "-"}</td>
+                    <td className="px-3 py-1.5 max-w-40 truncate text-muted-foreground">{b.locationName || "-"}</td>
 
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-1.5">
                       <div className="flex items-center gap-2">
                         <User size={16} className="text-muted-foreground" />
                         <div>
@@ -337,9 +337,9 @@ export default function BookingsPage() {
                       </div>
                     </td>
 
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-1.5">
                       <span
-                        className={`inline-flex rounded-full border px-3 py-1 text-xs font-medium ${statusStyle(
+                        className={`inline-flex rounded-full border px-3 py-1.5 text-xs font-medium ${statusStyle(
                           b.status,
                         )}`}
                       >
@@ -347,12 +347,12 @@ export default function BookingsPage() {
                       </span>
                     </td>
 
-                    <td className="px-3 py-3 text-muted-foreground">
+                    <td className="px-3 py-1.5 text-muted-foreground">
                       {format(new Date(b.createdAt), "dd/MM/yyyy HH:mm")}
                     </td>
 
-                    <td className="px-3 py-3">
-                      <div className="flex items-center justify-center gap-2">
+                    <td className="px-3 py-1.5">
+                      <div className="flex items-center justify-start gap-2">
                         <Link href={`/admin/bookings/${b.id}`} className="rounded-xl p-2 hover:bg-accent transition">
                           <Eye size={18} />
                         </Link>
@@ -386,8 +386,8 @@ export default function BookingsPage() {
           {!loading && pageData && totalPages > 0 && (
             <div className="flex items-center justify-between border-t border-border px-6 py-4">
               <p className="text-sm text-muted-foreground">
-                Hiển thị {(currentPage - 1) * ITEMS_PER_PAGE + 1} -{" "}
-                {Math.min(currentPage * ITEMS_PER_PAGE, pageData.totalElements)} của {pageData.totalElements} booking
+                Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} -{" "}
+                {Math.min(currentPage * ITEMS_PER_PAGE, pageData.totalElements)} of {pageData.totalElements} booking
               </p>
 
               <div className="flex items-center gap-2">

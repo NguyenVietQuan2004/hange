@@ -3,14 +3,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
   CalendarIcon,
   PlusIcon,
@@ -27,6 +19,15 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+
 import { serviceSlotService } from "@/services/booking/service-slot.service";
 import { serviceService } from "@/services/booking/service.service";
 import { locationService } from "@/services/booking/location.service";
@@ -39,6 +40,9 @@ interface SlotDefinition extends SlotItemDTO {
   id: string;
 }
 
+// ============================================================
+// Step Indicator
+// ============================================================
 function StepIndicator({
   currentStep,
   steps,
@@ -78,9 +82,8 @@ function StepIndicator({
 }
 
 // ============================================================
-// Location Selector Component
+// Location Selector
 // ============================================================
-
 function LocationSelector({
   locations,
   selectedLocationIds,
@@ -95,7 +98,7 @@ function LocationSelector({
   if (locations.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-border p-6 text-center">
-        <p className="text-sm text-muted-foreground">No centers available.</p>
+        <p className="   text-muted-foreground">No centers available.</p>
       </div>
     );
   }
@@ -115,7 +118,7 @@ function LocationSelector({
             <div className="flex items-center gap-2">
               <MapPinIcon className="size-4 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium text-foreground">{location.name || "Center"}</p>
+                <p className="   font-medium text-foreground">{location.name}</p>
                 {location.address && <p className="text-xs text-muted-foreground">{location.address}</p>}
               </div>
             </div>
@@ -127,9 +130,8 @@ function LocationSelector({
 }
 
 // ============================================================
-// Slot Row Component
+// Slot Row
 // ============================================================
-
 function SlotRow({
   slot,
   index,
@@ -144,8 +146,8 @@ function SlotRow({
   canRemove: boolean;
 }) {
   return (
-    <div className="group flex items-center gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:border-muted-foreground/30">
-      <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-secondary text-sm font-medium text-secondary-foreground">
+    <div className="group flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-1.5 transition-colors hover:border-muted-foreground/30">
+      <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-secondary    font-medium text-secondary-foreground">
         {index + 1}
       </div>
 
@@ -155,7 +157,7 @@ function SlotRow({
           <Input
             type="time"
             value={slot.startTime}
-            onChange={(e: any) => onUpdate(slot.id, "startTime", e.target.value)}
+            onChange={(e) => onUpdate(slot.id, "startTime", e.target.value)}
             className="h-9 bg-secondary"
           />
         </div>
@@ -167,7 +169,7 @@ function SlotRow({
           <Input
             type="time"
             value={slot.endTime}
-            onChange={(e: any) => onUpdate(slot.id, "endTime", e.target.value)}
+            onChange={(e) => onUpdate(slot.id, "endTime", e.target.value)}
             className="h-9 bg-secondary"
           />
         </div>
@@ -180,7 +182,7 @@ function SlotRow({
             type="number"
             min={1}
             value={slot.maxCapacity}
-            onChange={(e: any) => onUpdate(slot.id, "maxCapacity", parseInt(e.target.value) || 1)}
+            onChange={(e) => onUpdate(slot.id, "maxCapacity", parseInt(e.target.value) || 1)}
             className="h-9 w-20 bg-secondary text-center"
           />
         </div>
@@ -200,9 +202,8 @@ function SlotRow({
 }
 
 // ============================================================
-// Preview Summary Component
+// Preview Summary
 // ============================================================
-
 function SummaryItem({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="flex items-start gap-3">
@@ -211,7 +212,7 @@ function SummaryItem({ icon, label, value }: { icon: React.ReactNode; label: str
       </div>
       <div>
         <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="text-sm font-medium text-foreground">{value}</p>
+        <p className="   font-medium text-foreground">{value}</p>
       </div>
     </div>
   );
@@ -236,7 +237,7 @@ function PreviewSummary({
   return (
     <Card className="border-border bg-card">
       <CardHeader className="pb-4">
-        <CardTitle className="text-sm font-medium text-muted-foreground">Slot Creation Summary</CardTitle>
+        <CardTitle className="   font-medium text-muted-foreground">Slot Creation Summary</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -251,7 +252,7 @@ function PreviewSummary({
             label="Applied Date"
             value={
               date
-                ? date.toLocaleDateString("en-US", {
+                ? date.toLocaleDateString("vi-VN", {
                     weekday: "short",
                     month: "short",
                     day: "numeric",
@@ -271,7 +272,7 @@ function PreviewSummary({
               <LayersIcon className="size-4" />
               <span className="text-xs font-medium uppercase tracking-wide">Total Slots</span>
             </div>
-            <p className="mt-1 text-2xl font-semibold text-foreground">{totalSlotsCreated}</p>
+            <p className="mt-1    font-semibold text-foreground">{totalSlotsCreated}</p>
             <p className="text-xs text-muted-foreground">
               {slotsCount} slots × {locationNames.length} centers
             </p>
@@ -281,7 +282,7 @@ function PreviewSummary({
               <UsersIcon className="size-4" />
               <span className="text-xs font-medium uppercase tracking-wide">Total Capacity</span>
             </div>
-            <p className="mt-1 text-2xl font-semibold text-foreground">{totalCapacityAllLocations}</p>
+            <p className="mt-1    font-semibold text-foreground">{totalCapacityAllLocations}</p>
             <p className="text-xs text-muted-foreground">
               {totalCapacity} people × {locationNames.length} centers
             </p>
@@ -293,13 +294,11 @@ function PreviewSummary({
 }
 
 // ============================================================
-// Main Page Component
+// Main Component
 // ============================================================
-
 export default function CreateServiceSlotPage() {
   const router = useRouter();
 
-  // Original logic states
   const [allServices, setAllServices] = useState<ServiceDTO[]>([]);
   const [availableServices, setAvailableServices] = useState<ServiceDTO[]>([]);
   const [allLocations, setAllLocations] = useState<LocationDTO[]>([]);
@@ -316,28 +315,25 @@ export default function CreateServiceSlotPage() {
   const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string } | null>(null);
 
   // Load initial data
-  // tối ưu chỗ này
   useEffect(() => {
     const loadInitialData = async () => {
-      const [servicesData, { content: slotsData }, locationsData] = await Promise.all([
-        serviceService.getAll(),
-        serviceSlotService.getAll(),
-        locationService.getAll(),
-      ]);
+      const [servicesData, locationsData] = await Promise.all([serviceService.getAll(), locationService.getAll()]);
 
       setAllServices(servicesData);
       setAllLocations(locationsData);
 
-      const servicesWithSlots = new Set(slotsData.map((slot) => slot.serviceId));
-      const servicesWithoutSlots = servicesData.filter((service) => !servicesWithSlots.has(service.id));
+      // Lấy danh sách service đã có slot (để lọc)
+      const existingSlots = await serviceSlotService.getAll({ page: 0, size: 9999999 });
+      const servicesWithSlots = new Set(existingSlots.content.map((slot: any) => slot.serviceId));
 
+      const servicesWithoutSlots = servicesData.filter((service) => !servicesWithSlots.has(service.id));
       setAvailableServices(servicesWithoutSlots);
     };
 
     loadInitialData();
   }, []);
 
-  // Load locations when service is selected
+  // Load locations when service changes
   useEffect(() => {
     if (!selectedServiceId) {
       setLocations([]);
@@ -348,12 +344,10 @@ export default function CreateServiceSlotPage() {
     setSelectedLocationIds([]);
   }, [selectedServiceId, allLocations]);
 
-  // Calculate totals
   const totalCapacity = slots.reduce((sum, slot) => sum + slot.maxCapacity, 0);
   const selectedLocationNames = selectedLocationIds.map((id) => locations.find((l) => l.id === id)?.name ?? "");
   const selectedService = allServices.find((s) => s.id === selectedServiceId);
 
-  // Steps
   const steps = useMemo(
     () => [
       { label: "Service", isComplete: !!selectedServiceId },
@@ -370,7 +364,6 @@ export default function CreateServiceSlotPage() {
   const currentStep = steps.findIndex((s) => !s.isComplete);
   const isFormComplete = steps.every((s) => s.isComplete);
 
-  // Handlers
   const handleLocationToggle = useCallback((locationId: number) => {
     setSelectedLocationIds((prev) =>
       prev.includes(locationId) ? prev.filter((id) => id !== locationId) : [...prev, locationId],
@@ -411,7 +404,7 @@ export default function CreateServiceSlotPage() {
       const payload: BulkCreateServiceSlotRequest = {
         serviceId: Number(selectedServiceId),
         locationIds: selectedLocationIds,
-        slotDate: slotDate!.toISOString().split("T")[0], // YYYY-MM-DD
+        slotDate: slotDate!.toISOString().split("T")[0],
         slots: slots.map(({ startTime, endTime, maxCapacity }) => ({ startTime, endTime, maxCapacity })),
       };
 
@@ -419,17 +412,14 @@ export default function CreateServiceSlotPage() {
 
       setSubmitResult({
         success: true,
-        message: `Successfully created ${slots.length * selectedLocationIds.length} slots for service ${selectedService?.name}`,
+        message: `Tạo thành công ${slots.length * selectedLocationIds.length} slot cho dịch vụ ${selectedService?.name}`,
       });
 
-      // Reset form after 3 seconds
-      setTimeout(() => {
-        router.push("/admin/slots");
-      }, 2500);
+      setTimeout(() => router.push("/admin/slots"), 2500);
     } catch (error) {
       setSubmitResult({
         success: false,
-        message: "An error occurred while creating slots. Please try again.",
+        message: "Có lỗi xảy ra khi tạo slot. Vui lòng thử lại.",
       });
     } finally {
       setLoading(false);
@@ -437,8 +427,8 @@ export default function CreateServiceSlotPage() {
   };
 
   return (
-    <main className="min-h-screen bg-background">
-      <div className="mx-auto ">
+    <main className="min-h-screen bg-background ">
+      <div className="mx-auto">
         <div className="space-y-6">
           {/* Header */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -448,7 +438,7 @@ export default function CreateServiceSlotPage() {
               </Button>
               <div>
                 <h1 className="text-xl font-semibold tracking-tight">Create Booking Slots</h1>
-                <p className="text-sm text-muted-foreground">Only for services that have no slots yet</p>
+                <p className="   text-muted-foreground">Only for services that have no slots yet</p>
               </div>
             </div>
             <StepIndicator currentStep={currentStep === -1 ? 3 : currentStep} steps={steps} />
@@ -458,34 +448,56 @@ export default function CreateServiceSlotPage() {
             {/* Main Form */}
             <div className="space-y-6">
               {/* Service Selection */}
-              <Card>
+              {/* Service Selection */}
+              <Card className="">
                 <CardHeader>
-                  <CardTitle className="text-base">1. Select Service</CardTitle>
-                  <CardDescription>Choose a service that has no booking slots yet</CardDescription>
+                  <CardTitle className=" text-sm">1. Select Service</CardTitle>
+                  <CardDescription className="text-sm">Choose a service that has no booking slots yet</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Select
                     value={selectedServiceId.toString()}
                     onValueChange={(value) => setSelectedServiceId(Number(value))}
+                    disabled={availableServices.length === 0}
                   >
-                    <SelectTrigger className="rounded-sm! border-border w-full ring-0!">
-                      <SelectValue placeholder="Select service..." />
+                    <SelectTrigger className="rounded-sm border-border w-full ring-0">
+                      <SelectValue
+                        placeholder={availableServices.length === 0 ? "No available services" : "Select service..."}
+                      />
                     </SelectTrigger>
-                    <SelectContent className="rounded-sm! w-full mt-8">
-                      {availableServices.map((service) => (
-                        <SelectItem key={service.id} value={service.id.toString()}>
-                          {service.name}
-                        </SelectItem>
-                      ))}
+
+                    <SelectContent>
+                      {availableServices.length > 0 ? (
+                        availableServices.map((service) => (
+                          <SelectItem key={service.id} value={service.id.toString()}>
+                            {service.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <div className="px-4 py-6 text-center    text-muted-foreground">
+                          All services already have slots.
+                          <br />
+                          Please go to management page to edit existing slots.
+                        </div>
+                      )}
                     </SelectContent>
                   </Select>
+
+                  {availableServices.length === 0 && (
+                    <p className="mt-3    text-amber-600 flex items-center gap-2">
+                      <AlertCircleIcon className="size-4" />
+                      Currently there are no services available for creating new slots.
+                    </p>
+                  )}
                 </CardContent>
               </Card>
 
+              {/* Location, Date, Slots... (giữ nguyên như cũ) */}
+              {/* ... (phần còn lại giữ nguyên hoàn toàn) */}
               {/* Location Selection */}
               <Card className={cn(!selectedServiceId && "opacity-50")}>
                 <CardHeader>
-                  <CardTitle className="text-base">2. Select Centers</CardTitle>
+                  <CardTitle className=" text-sm">2. Select Centers</CardTitle>
                   <CardDescription>Choose one or multiple centers</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -501,7 +513,7 @@ export default function CreateServiceSlotPage() {
               {/* Date Selection */}
               <Card className={cn(!selectedLocationIds.length && "opacity-50")}>
                 <CardHeader>
-                  <CardTitle className="text-base">3. Select Date</CardTitle>
+                  <CardTitle className=" text-sm ">3. Select Date</CardTitle>
                   <CardDescription>Date to apply the time slots</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -536,7 +548,7 @@ export default function CreateServiceSlotPage() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-base">4. Configure Time Slots</CardTitle>
+                      <CardTitle className=" text-sm ">4. Configure Time Slots</CardTitle>
                       <CardDescription>Define time slots and capacity</CardDescription>
                     </div>
                     <Button variant="outline" size="sm" onClick={handleAddSlot} disabled={!slotDate}>
@@ -560,7 +572,7 @@ export default function CreateServiceSlotPage() {
               </Card>
             </div>
 
-            {/* Sidebar Preview */}
+            {/* Sidebar */}
             <div className="space-y-6">
               <PreviewSummary
                 serviceName={selectedService?.name || ""}
@@ -596,7 +608,7 @@ export default function CreateServiceSlotPage() {
                   ) : (
                     <AlertCircleIcon className="mt-0.5 size-4" />
                   )}
-                  <p className="text-sm">{submitResult.message}</p>
+                  <p className="  ">{submitResult.message}</p>
                 </div>
               )}
             </div>
