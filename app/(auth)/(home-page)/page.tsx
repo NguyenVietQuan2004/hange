@@ -1,11 +1,20 @@
 "use client";
 
 import { ShieldCheck, Users, Lock, Activity, ArrowRight, Database, Globe, Bell } from "lucide-react";
-
+// import { connectSocket } from "@/lib/socket";
 import HeaderLayout from "@/components/layout/header-layout";
 import FooterLayout from "@/components/layout/footer-layout";
+import { useEffect } from "react";
+import { useAuth } from "@/hook/auth-provider";
 
 export default function HomePage() {
+  // const { user } = useAuth();
+  // useEffect(() => {
+  //   if (!user || !user.id) return;
+
+  //   connectSocket(user.id);
+  // }, [user]);
+
   return (
     <HeaderLayout>
       <FooterLayout>

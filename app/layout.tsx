@@ -6,6 +6,7 @@ import { Geist } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/hook/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import SocketProvider from "@/hook/socket-provider";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -35,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           {" "}
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            {children}
+            <SocketProvider>{children}</SocketProvider>
           </ThemeProvider>
         </AuthProvider>
 

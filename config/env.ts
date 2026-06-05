@@ -8,6 +8,7 @@ export const ENV_CONFIG = {
   API_URL: ENV === "dev" ? process.env.NEXT_PUBLIC_API_URL_DEV : process.env.NEXT_PUBLIC_API_URL_PROD,
 
   APP_URL: ENV === "dev" ? process.env.NEXT_PUBLIC_APP_URL_DEV : process.env.NEXT_PUBLIC_APP_URL_PROD,
+  APP_URL_BASE: ENV === "dev" ? process.env.NEXT_PUBLIC_API_URL_DEV_BASE : process.env.NEXT_PUBLIC_API_URL_PROD_BASE,
   API_URL_STORAGE:
     ENV === "dev" ? process.env.NEXT_PUBLIC_API_URL_STORAGE_DEV : process.env.NEXT_PUBLIC_API_URL_STORAGE_PROD,
 };

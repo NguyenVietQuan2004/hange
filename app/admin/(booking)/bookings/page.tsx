@@ -1,6 +1,6 @@
 "use client";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Check, X, Eye, User } from "lucide-react";
 
@@ -9,6 +9,9 @@ import { BookingDTO } from "@/types/booking/booking-type";
 import { PageResponse } from "@/types/page-response";
 import { toast } from "sonner";
 import ConfirmModal from "@/components/confirm-modal";
+import { addNotificationListener } from "@/lib/socket";
+import { NotificationDTO } from "@/types/booking/notification-type";
+import { BookingStatus } from "@/const/booking/booking-status";
 const ITEMS_PER_PAGE = 10; // Bạn có thể thay đổi số lượng hiển thị mỗi trang
 
 const modalConfig = {
@@ -25,7 +28,10 @@ const modalConfig = {
     confirmText: "Yes, Reject",
   },
 };
-
+type SocketNotificationPayload = {
+  data: NotificationDTO;
+  event: string;
+};
 export default function BookingsPage() {
   const [pageData, setPageData] = useState<PageResponse<BookingDTO> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -61,6 +67,39 @@ export default function BookingsPage() {
     }
   };
 
+  const handleNotification = useCallback((payload: SocketNotificationPayload) => {
+    // fetchData();
+    if ([BookingStatus.CANCELLED].includes(payload.event as BookingStatus)) {
+      setPageData((pre) => {
+        if (!pre) return pre;
+
+        return {
+          ...pre,
+          content: [
+            ...pre?.content.map((item) =>
+              item.id !== payload.data.bookingId ? item : { ...item, status: payload.data.type },
+            ),
+          ],
+        };
+      });
+    } else if ([BookingStatus.PENDING].includes(payload.event as BookingStatus)) {
+      fetchData(currentPage);
+    }
+
+    // toast.info("Booking updated", { description: payload?.message || "Status has changed" });
+  }, []);
+
+  useEffect(() => {
+    fetchData(currentPage);
+
+    // Đăng ký lắng nghe thông báo
+    const unsubscribe = addNotificationListener(handleNotification);
+
+    return () => {
+      unsubscribe(); // Cleanup listener khi rời trang
+    };
+  }, [currentPage, handleNotification]);
+
   const handleConfirm = async () => {
     if (!action.id || !action.type) return;
 
@@ -93,9 +132,6 @@ export default function BookingsPage() {
       setActionLoading(false);
     }
   };
-  useEffect(() => {
-    fetchData(currentPage);
-  }, [currentPage]);
 
   const canUpdate = (status: string) => status === "PENDING";
 

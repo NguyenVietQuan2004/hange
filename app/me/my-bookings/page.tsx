@@ -12,14 +12,21 @@ import {
   FileText,
   User,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Eye, Ban } from "lucide-react";
 
 import { bookingService } from "@/services/booking/booking.service";
 import { BookingDTO } from "@/types/booking/booking-type";
 import ConfirmModal from "@/components/confirm-modal";
+import { addNotificationListener } from "@/lib/socket";
+import { NotificationDTO } from "@/types/booking/notification-type";
+import { BookingStatus } from "@/const/booking/booking-status";
 
 const ITEMS_PER_PAGE = 10;
+type SocketNotificationPayload = {
+  data: NotificationDTO;
+  event: string;
+};
 
 export default function MyBookingsPage() {
   const [data, setData] = useState<BookingDTO[]>([]);
@@ -44,6 +51,27 @@ export default function MyBookingsPage() {
       setLoading(false);
     }
   };
+
+  const handleNotification = useCallback((payload: SocketNotificationPayload) => {
+    // fetchData();
+    console.log("payload: ", payload, [BookingStatus.REJECTED, BookingStatus.CONFIRMED]);
+    if (![BookingStatus.REJECTED, BookingStatus.CONFIRMED].includes(payload.event as BookingStatus)) return;
+    setData((pre) =>
+      pre.map((item) => (item.id !== payload.data.bookingId ? item : { ...item, status: payload.data.type })),
+    );
+    // toast.info("Booking updated", { description: payload?.message || "Status has changed" });
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+
+    // Đăng ký lắng nghe thông báo
+    const unsubscribe = addNotificationListener(handleNotification);
+
+    return () => {
+      unsubscribe(); // Cleanup listener khi rời trang
+    };
+  }, [handleNotification]);
 
   const handleCancel = async () => {
     if (!cancelId) return;
@@ -134,7 +162,7 @@ export default function MyBookingsPage() {
                 paginated.map((b, index) => (
                   <tr key={b.id} className="hover:bg-accent/40 transition border-border">
                     {/* STT */}
-                    <td className="px-6 py-2    text-muted-foreground">{startIndex + index + 1}</td>
+                    <td className="px-6 py-2    text-muted-foreground">{b.id}</td>
 
                     {/* SERVICE */}
                     <td className="px-6 py-2 max-w-45 truncate text-muted-foreground font-medium">{b.serviceName}</td>

@@ -134,34 +134,38 @@ export default function BookingDetailPage() {
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Status</span>
 
-            <span className={`rounded-full border px-3 py-1 text-xs font-medium ${statusStyle}`}>{booking.status}</span>
+            <span className={`rounded-full border px-3 py-1 text-xs font-medium ${statusStyle}`}>
+              {booking.status || "_"}
+            </span>
           </div>
 
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Service</span>
-            <span className="font-medium">{booking.serviceName}</span>
+            <span className="font-medium">{booking.serviceName || "_"}</span>
           </div>
 
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Price</span>
-            <span className="font-medium">{booking.servicePrice?.toLocaleString()} ₫</span>
+            <span className="font-medium">{booking.servicePrice?.toLocaleString() || "_"} ₫</span>
           </div>
 
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Duration</span>
-            <span className="font-medium">{booking.serviceDuration} min</span>
+            <span className="font-medium">{booking.serviceDuration || "_"} min</span>
           </div>
 
           {/* LOCATION */}
           <div className="border-t pt-4 space-y-3">
             <div className="flex justify-between">
               <span className="text-sm text-muted-foreground">Location</span>
-              <span className="font-medium">{booking.locationName}</span>
+              <span className="font-medium">{booking.locationName || "_"}</span>
             </div>
 
             <div className="flex justify-between">
               <span className="text-sm text-muted-foreground">Address</span>
-              <span className="text-right text-sm max-w-[60%] text-muted-foreground">{booking.locationAddress}</span>
+              <span className="text-right text-sm max-w-[60%] text-muted-foreground">
+                {booking.locationAddress || "_"}
+              </span>
             </div>
           </div>
 
@@ -171,8 +175,8 @@ export default function BookingDetailPage() {
               <div className="text-sm font-medium">User: </div>
 
               <div className="flex flex-col">
-                <span className="font-medium">{booking.userDTO.fullName}</span>
-                <span className="text-xs text-muted-foreground">{booking.userDTO.email}</span>
+                <span className="font-medium">{booking.userDTO.fullName || "_"}</span>
+                <span className="text-xs text-muted-foreground">{booking.userDTO.email || "_"}</span>
               </div>
             </div>
           )}
