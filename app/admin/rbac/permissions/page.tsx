@@ -18,7 +18,7 @@ export default function PermissionTab() {
   const [editId, setEditId] = useState<number | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [showFormModal, setShowFormModal] = useState(false);
-
+  console.log(list);
   // Accordion state
   const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
 
@@ -26,10 +26,10 @@ export default function PermissionTab() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await permissionService.getAll();
+      const res = await permissionService.getAll({ page: 0, size: 99999 });
       setList(res.content);
     } catch (err) {
-      console.error(err);
+      console.log(err);
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,7 @@ export default function PermissionTab() {
       setShowFormModal(false);
       fetchData();
     } catch (err) {
-      console.error(err);
+      console.log(err);
     }
   };
 
@@ -83,7 +83,7 @@ export default function PermissionTab() {
       await permissionService.remove(deleteId);
       setList((prev) => prev.filter((p) => p.id !== deleteId));
     } catch (err) {
-      console.error(err);
+      console.log(err);
     } finally {
       setDeleteId(null);
     }

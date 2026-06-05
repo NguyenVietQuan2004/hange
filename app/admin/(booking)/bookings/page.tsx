@@ -8,31 +8,40 @@ import { bookingService } from "@/services/booking/booking.service";
 import { BookingDTO } from "@/types/booking/booking-type";
 import { PageResponse } from "@/types/page-response";
 import { toast } from "sonner";
+import ConfirmModal from "@/components/confirm-modal";
 const ITEMS_PER_PAGE = 10; // Bạn có thể thay đổi số lượng hiển thị mỗi trang
+
+const modalConfig = {
+  approve: {
+    variant: "success" as const,
+    title: "Approve Booking",
+    description: "Are you sure you want to approve this booking?",
+    confirmText: "Yes, Approve",
+  },
+  reject: {
+    variant: "danger" as const,
+    title: "Reject Booking",
+    description: "Are you sure you want to reject this booking?",
+    confirmText: "Yes, Reject",
+  },
+};
 
 export default function BookingsPage() {
   const [pageData, setPageData] = useState<PageResponse<BookingDTO> | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Fetch data với phân trang từ backend
-  // const fetchData = async (page: number) => {
-  //   try {
-  //     setLoading(true);
+  type ActionType = "approve" | "reject" | null;
 
-  //     const response = await bookingService.getAll({
-  //       page: page - 1, // Backend thường dùng 0-based
-  //       size: ITEMS_PER_PAGE,
-  //       // sort: "createdAt,desc" // Nếu muốn sort có thể mở comment
-  //     });
+  const [action, setAction] = useState<{
+    type: ActionType;
+    id: number | null;
+  }>({
+    type: null,
+    id: null,
+  });
 
-  //     setPageData(response);
-  //   } catch (err) {
-  //     console.error("Failed to fetch bookings:", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const [actionLoading, setActionLoading] = useState(false);
 
   const fetchData = async (page: number) => {
     try {
@@ -45,47 +54,48 @@ export default function BookingsPage() {
 
       setPageData(response);
     } catch (err) {
-      console.error("Failed to fetch bookings:", err);
+      console.log("Failed to fetch bookings:", err);
       toast.error("Failed to load bookings.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleConfirm = async (id: number) => {
-    try {
-      await bookingService.confirm(id);
-      toast.success("Booking confirmed successfully.");
-      fetchData(currentPage);
-    } catch (error) {
-      console.error("Confirm booking failed:", error);
-      toast.error("Failed to confirm booking.");
-    }
-  };
+  const handleConfirm = async () => {
+    if (!action.id || !action.type) return;
 
-  const handleReject = async (id: number) => {
     try {
-      await bookingService.reject(id);
-      toast.success("Booking rejected successfully.");
+      setActionLoading(true);
+
+      switch (action.type) {
+        case "approve":
+          await bookingService.confirm(action.id);
+          toast.success("Booking approved successfully.");
+          break;
+
+        case "reject":
+          await bookingService.reject(action.id);
+          toast.success("Booking rejected successfully.");
+          break;
+      }
+
+      setAction({
+        type: null,
+        id: null,
+      });
+
       fetchData(currentPage);
     } catch (error) {
-      console.error("Reject booking failed:", error);
-      toast.error("Failed to reject booking.");
+      console.log(error);
+
+      toast.error(`Failed to ${action.type} booking.`);
+    } finally {
+      setActionLoading(false);
     }
   };
   useEffect(() => {
     fetchData(currentPage);
   }, [currentPage]);
-
-  // const handleConfirm = async (id: number) => {
-  //   await bookingService.confirm(id);
-  //   fetchData(currentPage); // Refresh trang hiện tại
-  // };
-
-  // const handleReject = async (id: number) => {
-  //   await bookingService.reject(id);
-  //   fetchData(currentPage);
-  // };
 
   const canUpdate = (status: string) => status === "PENDING";
 
@@ -145,7 +155,8 @@ export default function BookingsPage() {
                 bookings.map((b, index) => (
                   <tr key={b.id} className="border-t border-border hover:bg-accent/40">
                     <td className="px-3 py-1.5 text-muted-foreground">
-                      {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
+                      {/* {(currentPage - 1) * ITEMS_PER_PAGE + index + 1} */}
+                      {b.id}
                     </td>
 
                     <td className="px-3 py-1.5 max-w-40 truncate font-medium text-muted-foreground">{b.serviceName}</td>
@@ -185,14 +196,24 @@ export default function BookingsPage() {
                         {canUpdate(b.status) && (
                           <>
                             <button
-                              onClick={() => handleConfirm(b.id)}
+                              onClick={() =>
+                                setAction({
+                                  type: "approve",
+                                  id: b.id,
+                                })
+                              }
                               className="rounded-xl border border-green-200 p-2 text-green-600 hover:bg-green-50 transition"
                             >
                               <Check size={18} />
                             </button>
 
                             <button
-                              onClick={() => handleReject(b.id)}
+                              onClick={() =>
+                                setAction({
+                                  type: "reject",
+                                  id: b.id,
+                                })
+                              }
                               className="rounded-xl border border-red-200 p-2 text-red-500 hover:bg-red-50 transition"
                             >
                               <X size={18} />
@@ -248,6 +269,22 @@ export default function BookingsPage() {
           )}
         </div>
       </div>
+      <ConfirmModal
+        open={!!action.type}
+        variant={action.type ? modalConfig[action.type].variant : "default"}
+        loading={actionLoading}
+        title={action.type ? modalConfig[action.type].title : ""}
+        description={action.type ? modalConfig[action.type].description : ""}
+        confirmText={action.type ? modalConfig[action.type].confirmText : "Confirm"}
+        cancelText="Cancel"
+        onCancel={() =>
+          setAction({
+            type: null,
+            id: null,
+          })
+        }
+        onConfirm={handleConfirm}
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 import {
   Calendar as CalendarIconLucide,
@@ -16,6 +17,7 @@ import { Eye, Ban } from "lucide-react";
 
 import { bookingService } from "@/services/booking/booking.service";
 import { BookingDTO } from "@/types/booking/booking-type";
+import ConfirmModal from "@/components/confirm-modal";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -24,7 +26,7 @@ export default function MyBookingsPage() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [loadingCancelId, setLoadingCancelId] = useState<number | null>(null);
-
+  const [cancelId, setCancelId] = useState<number | null>(null);
   const [selectedBooking, setSelectedBooking] = useState<BookingDTO | null>(null);
 
   useEffect(() => {
@@ -37,17 +39,29 @@ export default function MyBookingsPage() {
       const res = await bookingService.getMyBookings();
       setData(res);
     } catch (err) {
-      console.error(err);
+      console.log(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCancel = async (id: number) => {
+  const handleCancel = async () => {
+    if (!cancelId) return;
+
     try {
-      setLoadingCancelId(id);
-      await bookingService.cancel(id);
+      setLoadingCancelId(cancelId);
+
+      await bookingService.cancel(cancelId);
+
+      toast.success("Booking cancelled successfully.");
+
       await fetchData();
+
+      setCancelId(null);
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Failed to cancel booking.");
     } finally {
       setLoadingCancelId(null);
     }
@@ -151,7 +165,7 @@ export default function MyBookingsPage() {
                         {/* CANCEL */}
                         {canCancel(b.status) && (
                           <button
-                            onClick={() => handleCancel(b.id)}
+                            onClick={() => setCancelId(b.id)}
                             disabled={loadingCancelId === b.id}
                             className="rounded-lg border-red-200 p-2 text-red-500 hover:bg-red-50 transition disabled:opacity-50"
                           >
@@ -326,6 +340,18 @@ export default function MyBookingsPage() {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        open={!!cancelId}
+        variant="danger"
+        loading={loadingCancelId !== null}
+        title="Cancel Booking"
+        description="Are you sure you want to cancel this booking? This action cannot be undone."
+        confirmText="Yes, Cancel"
+        cancelText="Keep Booking"
+        onCancel={() => setCancelId(null)}
+        onConfirm={handleCancel}
+      />
     </div>
   );
 }

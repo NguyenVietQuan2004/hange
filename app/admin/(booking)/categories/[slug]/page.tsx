@@ -30,7 +30,7 @@ export default function CategoryDetailPage() {
 
       setCategory(data);
     } catch (error) {
-      console.error(error);
+      console.log(error);
 
       toast.error("Failed to load category.");
     } finally {

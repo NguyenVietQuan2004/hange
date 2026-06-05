@@ -22,27 +22,20 @@ import ContentInput from "@/components/content-blog";
 
 type Props = {
   mode: "create" | "update";
-
   initialData?: CategoryDTO;
 };
 
 type ImageFormType = {
   url: string;
-
   description?: string;
-
   file?: File | null;
-
   preview?: string | null;
 };
 
 type FormValues = {
   name: string;
-
   slug: string;
-
   description: string;
-
   content: string;
 };
 
@@ -179,7 +172,7 @@ export default function CategoryForm({ mode, initialData }: Props) {
 
     //   router.push("/admin/categories");
     // } catch (error) {
-    //   console.error(error);
+    //   console.log(error);
 
     //   toast.error(mode === "create" ? "Create failed" : "Update failed");
     // } finally {
@@ -232,7 +225,7 @@ export default function CategoryForm({ mode, initialData }: Props) {
 
       router.push("/admin/categories");
     } catch (error) {
-      console.error(error);
+      console.log(error);
 
       toast.error(mode === "create" ? "Failed to create category." : "Failed to update category.");
     } finally {

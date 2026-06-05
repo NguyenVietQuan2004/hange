@@ -29,7 +29,7 @@ export default function ServiceDetailPage() {
 
       setService(data);
     } catch (error) {
-      console.error(error);
+      console.log(error);
 
       toast.error("Failed to load services.");
     } finally {

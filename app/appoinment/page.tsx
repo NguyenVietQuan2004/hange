@@ -32,6 +32,7 @@ import { CategoryDTO } from "@/types/booking/category-type";
 import HeaderLayout from "@/components/layout/header-layout";
 import FooterLayout from "@/components/layout/footer-layout";
 import { toast } from "sonner";
+import { ERROR_BOOKING_CODE } from "@/const/booking/error-booking-code";
 
 const STEPS = [
   { id: 1, title: "Service", icon: Briefcase },
@@ -78,7 +79,7 @@ export default function CreateBookingPage() {
         setServices(allServices);
         setCategories(allCategories);
       } catch (error) {
-        console.error("Failed to load initial data:", error);
+        console.log("Failed to load initial data:", error);
       } finally {
         setIsLoadingInitial(false);
       }
@@ -106,7 +107,7 @@ export default function CreateBookingPage() {
       const locationsData = await serviceSlotService.getLocationsByService(id);
       setLocations(locationsData);
     } catch (error) {
-      console.error("Failed to load locations:", error);
+      console.log("Failed to load locations:", error);
       setLocations([]);
     } finally {
       setIsLoadingLocations(false);
@@ -142,7 +143,7 @@ export default function CreateBookingPage() {
       });
       setSlots(allSlots);
     } catch (error) {
-      console.error("Failed to load slots:", error);
+      console.log("Failed to load slots:", error);
       setSlots([]);
     } finally {
       setIsLoadingSlots(false);
@@ -160,10 +161,21 @@ export default function CreateBookingPage() {
       toast.success("Booking submitted successfully. Please wait for confirmation.");
 
       setIsSuccess(true);
-    } catch (error) {
-      console.error("Booking failed:", error);
+    } catch (error: any) {
+      console.log("Booking failed:", error);
 
-      toast.error("Unable to submit your booking. Please check your information and try again.");
+      switch (error?.message) {
+        case ERROR_BOOKING_CODE.BOOKING_RATE_LIMIT:
+          toast.error("You have reached the booking limit. Please try again later.");
+          break;
+
+        case ERROR_BOOKING_CODE.DUPLICATE_BOOKING:
+          toast.error("You have already booked this time slot.");
+          break;
+
+        default:
+          toast.error("Unable to submit your booking. Please check your information and try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }

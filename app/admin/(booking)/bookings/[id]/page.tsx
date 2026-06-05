@@ -2,12 +2,27 @@
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-
+import { format } from "date-fns";
 import { bookingService } from "@/services/booking/booking.service";
 import { BookingDTO } from "@/types/booking/booking-type";
 
 import { ArrowLeft, Check, X, Ban } from "lucide-react";
+import ConfirmModal from "@/components/confirm-modal";
 
+const modalConfig = {
+  approve: {
+    variant: "success" as const,
+    title: "Approve Booking",
+    description: "Are you sure you want to approve this booking?",
+    confirmText: "Yes, Approve",
+  },
+  reject: {
+    variant: "danger" as const,
+    title: "Reject Booking",
+    description: "Are you sure you want to reject this booking?",
+    confirmText: "Yes, Reject",
+  },
+};
 export default function BookingDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -16,7 +31,17 @@ export default function BookingDetailPage() {
 
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState<BookingDTO | null>(null);
+  const [actionLoading, setActionLoading] = useState(false);
 
+  type ActionType = "approve" | "reject" | null;
+
+  const [action, setAction] = useState<{
+    type: ActionType;
+    id: number | null;
+  }>({
+    type: null,
+    id: null,
+  });
   useEffect(() => {
     fetchData();
   }, []);
@@ -27,20 +52,43 @@ export default function BookingDetailPage() {
       const data = await bookingService.getById(id);
       setBooking(data);
     } catch (error) {
-      console.error("Failed to load booking:", error);
+      console.log("Failed to load booking:", error);
       toast.error("Failed to load booking.");
     } finally {
       setLoading(false);
     }
   };
 
-  const refresh = async () => {
+  const handleConfirm = async () => {
+    if (!action.id || !action.type) return;
+
     try {
-      const data = await bookingService.getById(id);
-      setBooking(data);
+      setActionLoading(true);
+
+      switch (action.type) {
+        case "approve":
+          await bookingService.confirm(action.id);
+          toast.success("Booking approved successfully.");
+          break;
+
+        case "reject":
+          await bookingService.reject(action.id);
+          toast.success("Booking rejected successfully.");
+          break;
+      }
+
+      setAction({
+        type: null,
+        id: null,
+      });
+
+      fetchData();
     } catch (error) {
-      console.error("Failed to refresh booking:", error);
-      toast.error("Failed to refresh booking.");
+      console.log(error);
+
+      toast.error(`Failed to ${action.type} booking.`);
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -146,7 +194,10 @@ export default function BookingDetailPage() {
 
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Created</span>
-            <span className="font-medium">{booking.createdAt}</span>
+            <span className="font-medium">
+              {" "}
+              {booking.createdAt ? format(new Date(booking.createdAt), "dd/MM/yyyy HH:mm") : "-"}
+            </span>
           </div>
 
           <div className="border-t pt-4">
@@ -160,57 +211,51 @@ export default function BookingDetailPage() {
       {isPending && (
         <div className="flex flex-wrap gap-3">
           <button
-            onClick={async () => {
-              try {
-                await bookingService.confirm(booking.id);
-                toast.success("Booking confirmed successfully.");
-                refresh();
-              } catch (error) {
-                console.error("Confirm booking failed:", error);
-                toast.error("Failed to confirm booking.");
-              }
-            }}
-            className="flex items-center gap-2 rounded-lg bg-green-600 px-5 py-2.5 text-sm font-medium text-white hover:opacity-90"
+            onClick={() =>
+              setAction({
+                type: "approve",
+                id: booking.id,
+              })
+            }
+            className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 transition-colors"
+            // className="flex items-center gap-2 rounded-lg bg-green-600 px-5 py-2.5 text-sm font-medium text-white hover:opacity-90"
           >
             <Check className="h-4 w-4" />
             Confirm
           </button>
 
           <button
-            onClick={async () => {
-              try {
-                await bookingService.reject(booking.id);
-                toast.success("Booking rejected successfully.");
-                refresh();
-              } catch (error) {
-                console.error("Reject booking failed:", error);
-                toast.error("Failed to reject booking.");
-              }
-            }}
-            className="flex items-center gap-2 rounded-lg bg-red-500 px-5 py-2.5 text-sm font-medium text-white hover:opacity-90"
+            onClick={() =>
+              setAction({
+                type: "reject",
+                id: booking.id,
+              })
+            }
+            className="flex items-center gap-2 rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-rose-700 transition-colors"
+            // className="flex items-center gap-2 rounded-lg bg-red-500 px-5 py-2.5 text-sm font-medium text-white hover:opacity-90"
           >
             <X className="h-4 w-4" />
             Reject
           </button>
-
-          <button
-            onClick={async () => {
-              try {
-                await bookingService.cancel(booking.id);
-                toast.success("Booking cancelled successfully.");
-                refresh();
-              } catch (error) {
-                console.error("Cancel booking failed:", error);
-                toast.error("Failed to cancel booking.");
-              }
-            }}
-            className="flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-medium hover:bg-accent"
-          >
-            <Ban className="h-4 w-4" />
-            Cancel
-          </button>
         </div>
       )}
+
+      <ConfirmModal
+        open={!!action.type}
+        variant={action.type ? modalConfig[action.type].variant : "default"}
+        loading={actionLoading}
+        title={action.type ? modalConfig[action.type].title : ""}
+        description={action.type ? modalConfig[action.type].description : ""}
+        confirmText={action.type ? modalConfig[action.type].confirmText : "Confirm"}
+        cancelText="Cancel"
+        onCancel={() =>
+          setAction({
+            type: null,
+            id: null,
+          })
+        }
+        onConfirm={handleConfirm}
+      />
     </div>
   );
 }

@@ -3,11 +3,8 @@
 import Link from "next/link";
 import { toast } from "sonner";
 import { useState } from "react";
-
 import { authService } from "@/services/auth/auth.service";
-
 import { AppuleIcon, GoogleIcon } from "@/public/icons";
-
 import { REGISTER_ERROR_MESSAGE } from "@/const/auth/register-error";
 
 const listService = [
@@ -69,14 +66,6 @@ export default function RegisterClientPage() {
 
       toast.success("Register successful. Please check your email.");
     } catch (err: any) {
-      /**
-       * Backend response example:
-       * {
-       *   code: "EMAIL_ALREADY_EXISTS",
-       *   message: "Email already exists"
-       * }
-       */
-
       const errorCode = err?.message || err?.response?.data?.code || err?.code;
 
       const message = REGISTER_ERROR_MESSAGE[errorCode] || "Something went wrong.";

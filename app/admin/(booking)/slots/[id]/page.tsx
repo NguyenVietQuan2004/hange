@@ -91,7 +91,7 @@ export default function ManageServiceSlotsPage() {
         setServices(servicesData);
         setLocations(locationsData);
       } catch (error) {
-        console.error(error);
+        console.log(error);
         toast.error("Failed to load initial data");
       }
     };
@@ -123,7 +123,7 @@ export default function ManageServiceSlotsPage() {
       setPageData(response);
       setExpandedDates(new Set());
     } catch (error) {
-      console.error("Load slots failed:", error);
+      console.log("Load slots failed:", error);
       toast.error("Failed to load slots");
       setPageData(null);
     } finally {
@@ -167,7 +167,7 @@ export default function ManageServiceSlotsPage() {
       await serviceSlotService.update(slotId, payload);
       loadSlots(currentPage);
     } catch (err) {
-      console.error(err);
+      console.log(err);
       toast.error("Failed to update slot");
     }
   };
@@ -196,7 +196,7 @@ export default function ManageServiceSlotsPage() {
       setNewSlots((prev) => prev.filter((_, i) => i !== index - backendSlots.length));
       loadSlots(currentPage);
     } catch (err) {
-      console.error(err);
+      console.log(err);
       toast.error("Failed to create slot");
     }
   };
@@ -227,7 +227,7 @@ export default function ManageServiceSlotsPage() {
 
       loadSlots(currentPage);
     } catch (error) {
-      console.error(error);
+      console.log(error);
 
       toast.error("Failed to delete slot");
     } finally {

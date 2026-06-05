@@ -37,7 +37,7 @@ export default function ServicesPage() {
 
       setServices(data);
     } catch (error) {
-      console.error(error);
+      console.log(error);
 
       toast.error("Failed to load services.");
     } finally {
@@ -59,7 +59,7 @@ export default function ServicesPage() {
 
       setDeleteId(null);
     } catch (error) {
-      console.error(error);
+      console.log(error);
 
       toast.error("Failed to delete service.");
     } finally {

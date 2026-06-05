@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       url: `data:${mimeType};base64,${base64}`,
     });
   } catch (error) {
-    console.error("Upload error:", error);
+    console.log("Upload error:", error);
     return NextResponse.json({ error: "Error processing file" }, { status: 500 });
   }
 }

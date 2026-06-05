@@ -68,7 +68,7 @@ export default function ServiceForm({ mode, initialData }: Props) {
       const data = await categoryService.getAll();
       setCategories(data);
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast.error("Cannot load categories");
     }
   };
@@ -129,7 +129,7 @@ export default function ServiceForm({ mode, initialData }: Props) {
       }
       router.push("/admin/services");
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast.error(mode === "create" ? "Create failed" : "Update failed");
     } finally {
       setLoading(false);

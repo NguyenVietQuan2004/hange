@@ -73,7 +73,7 @@ export default function ServiceSlotsPage() {
         setServices(data);
       })
       .catch((error) => {
-        console.error(error);
+        console.log(error);
         toast.error("Failed to load services");
       });
   }, []);
@@ -93,7 +93,7 @@ export default function ServiceSlotsPage() {
         setLocations(data);
         setSelectedLocationId("");
       } catch (error) {
-        console.error(error);
+        console.log(error);
         toast.error("Failed to load locations");
       }
     };
@@ -123,7 +123,7 @@ export default function ServiceSlotsPage() {
 
       setPageData({ content, ...paginationInfo });
     } catch (error) {
-      console.error("Search failed:", error);
+      console.log("Search failed:", error);
       toast.error("Failed to load slots");
       setPageData(null);
     } finally {

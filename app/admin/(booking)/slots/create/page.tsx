@@ -332,7 +332,7 @@ export default function CreateServiceSlotPage() {
 
         setAvailableServices(servicesWithoutSlots);
       } catch (error) {
-        console.error(error);
+        console.log(error);
         toast.error("Failed to load initial data");
       }
     };
@@ -431,7 +431,7 @@ export default function CreateServiceSlotPage() {
 
       setTimeout(() => router.push("/admin/slots"), 2500);
     } catch (error) {
-      console.error(error);
+      console.log(error);
 
       toast.error("Failed to create slots");
 

@@ -109,7 +109,7 @@ export default function LocationForm({ mode, initialData }: Props) {
 
       router.push("/admin/locations");
     } catch (error) {
-      console.error(error);
+      console.log(error);
 
       toast.error(mode === "create" ? "Create failed" : "Update failed");
     } finally {

@@ -28,11 +28,14 @@ export default function RoleTab() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [r, { content: p }] = await Promise.all([roleService.getAll(), permissionService.getAll()]);
+      const [r, { content: p }] = await Promise.all([
+        roleService.getAll(),
+        permissionService.getAll({ page: 0, size: 99999 }),
+      ]);
       setRoles(r);
       setPermissions(p);
     } catch (err) {
-      console.error(err);
+      console.log(err);
     } finally {
       setLoading(false);
     }
@@ -138,7 +141,7 @@ export default function RoleTab() {
       setShowFormModal(false);
       fetchData();
     } catch (err) {
-      console.error(err);
+      console.log(err);
     }
   };
 
@@ -149,7 +152,7 @@ export default function RoleTab() {
       await roleService.remove(deleteId);
       setRoles((prev) => prev.filter((r) => r.id !== deleteId));
     } catch (err) {
-      console.error(err);
+      console.log(err);
     } finally {
       setDeleteId(null);
     }

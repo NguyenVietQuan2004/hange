@@ -4,11 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
-
 import FooterLayout from "@/components/layout/footer-layout";
-
 import { authService } from "@/services/auth/auth.service";
-
 import { VERIFY_EMAIL_ERROR_MESSAGE } from "@/const/auth/verify-email-error";
 
 export default function VerifyPage() {

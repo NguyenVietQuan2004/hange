@@ -35,7 +35,7 @@ export default function CategoriesPage() {
 
       setCategories(data);
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast.error("Failed to load categories.");
     } finally {
       setLoading(false);
@@ -56,7 +56,7 @@ export default function CategoriesPage() {
 
       setDeleteId(null);
     } catch (error) {
-      console.error(error);
+      console.log(error);
 
       toast.error("Failed to delete category.");
     } finally {

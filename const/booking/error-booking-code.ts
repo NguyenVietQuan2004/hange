@@ -1,4 +1,4 @@
-export const ERROR_CODE = {
+export const ERROR_BOOKING_CODE = {
   /* =================================================
    * CATEGORY
    * ================================================= */
@@ -51,4 +51,4 @@ export const ERROR_CODE = {
   INVALID_PRICE: "INVALID_PRICE",
 } as const;
 
-export type ErrorCodeType = keyof typeof ERROR_CODE;
+export type ErrorCodeType = keyof typeof ERROR_BOOKING_CODE;
