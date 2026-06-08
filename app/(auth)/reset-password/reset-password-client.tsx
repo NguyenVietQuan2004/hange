@@ -8,6 +8,7 @@ import { useRouter, notFound, useSearchParams } from "next/navigation";
 import FooterLayout from "@/components/layout/footer-layout";
 import { authService } from "@/services/auth/auth.service";
 import { RESET_PASSWORD_ERROR_MESSAGE, RESET_PASSWORD_FATAL_ERRORS } from "@/const/auth/reset-password-error";
+import { CoreIcon } from "@/public/icons";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -81,7 +82,8 @@ export default function ResetPasswordPage() {
       <div className="flex justify-center p-2 mt-20 bg-background text-foreground">
         <div className="w-full max-w-md">
           <div className="flex justify-center mb-6">
-            <Image alt="" src="/image/logo.png" width={48} height={48} className="w-12 h-12 rounded-full bg-card" />
+            {/* <Image alt="" src="/image/logo.png" width={48} height={48} className="w-12 h-12 rounded-full bg-card" /> */}
+            <CoreIcon width={50} height={42} />
           </div>
 
           <h1 className="text-center text-xl font-bold mb-6">Reset your password</h1>

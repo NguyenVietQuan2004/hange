@@ -35,6 +35,8 @@ import { locationService } from "@/services/booking/location.service";
 import { ServiceDTO } from "@/types/booking/service-type";
 import { LocationDTO } from "@/types/booking/location-type";
 import { BulkCreateServiceSlotRequest, SlotItemDTO } from "@/types/booking/service-slot-type";
+import { useMasterDataStore } from "@/app/store/master-data-store";
+import { useShallow } from "zustand/react/shallow";
 
 interface SlotDefinition extends SlotItemDTO {
   id: string;
@@ -299,9 +301,7 @@ function PreviewSummary({
 export default function CreateServiceSlotPage() {
   const router = useRouter();
 
-  const [allServices, setAllServices] = useState<ServiceDTO[]>([]);
   const [availableServices, setAvailableServices] = useState<ServiceDTO[]>([]);
-  const [allLocations, setAllLocations] = useState<LocationDTO[]>([]);
   const [locations, setLocations] = useState<LocationDTO[]>([]);
 
   const [selectedServiceId, setSelectedServiceId] = useState<number | "">("");
@@ -313,22 +313,23 @@ export default function CreateServiceSlotPage() {
 
   const [loading, setLoading] = useState(false);
   const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  const { services: allServices, locations: allLocations } = useMasterDataStore(
+    useShallow((state) => ({
+      services: state.services,
+      locations: state.locations,
+    })),
+  );
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        const [servicesData, locationsData] = await Promise.all([serviceService.getAll(), locationService.getAll()]);
-
-        setAllServices(servicesData);
-        setAllLocations(locationsData);
-
         const existingSlots = await serviceSlotService.getAll({
           page: 0,
           size: 9999999,
         });
-
         const servicesWithSlots = new Set(existingSlots.content.map((slot: any) => slot.serviceId));
 
-        const servicesWithoutSlots = servicesData.filter((service) => !servicesWithSlots.has(service.id));
+        const servicesWithoutSlots = allServices.filter((service) => !servicesWithSlots.has(service.id));
 
         setAvailableServices(servicesWithoutSlots);
       } catch (error) {

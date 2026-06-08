@@ -148,7 +148,7 @@ const unauthorizedResponse = (request: NextRequest) => {
 export const config: MiddlewareConfig = {
   matcher: [
     {
-      source: "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+      source: "/((?!api|_next/static|image||_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
       //! Cách 2: Skip trong config
       missing: [{ type: "header", key: "next-action" }],
     },

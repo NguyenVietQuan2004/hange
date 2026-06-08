@@ -7,6 +7,7 @@ import { notFound, useRouter, useSearchParams } from "next/navigation";
 import FooterLayout from "@/components/layout/footer-layout";
 import { authService } from "@/services/auth/auth.service";
 import { VERIFY_EMAIL_ERROR_MESSAGE } from "@/const/auth/verify-email-error";
+import { CoreIcon } from "@/public/icons";
 
 export default function VerifyPage() {
   const router = useRouter();
@@ -59,7 +60,8 @@ export default function VerifyPage() {
         <div className="w-full max-w-sm">
           {/* LOGO */}
           <div className="flex justify-center mb-6">
-            <Image alt="" src="/image/logo.png" width={48} height={48} className="w-12 h-12 rounded-full" />
+            {/* <Image alt="" src="/image/logo.png" width={48} height={48} className="w-12 h-12 rounded-full" /> */}
+            <CoreIcon width={50} height={42} />
           </div>
 
           <h1 className="text-center text-xl font-bold mb-6">Verify your email</h1>

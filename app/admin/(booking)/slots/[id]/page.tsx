@@ -44,6 +44,8 @@ import { LocationDTO } from "@/types/booking/location-type";
 import { ServiceSlotDTO, UpdateServiceSlotRequest, CreateServiceSlotRequest } from "@/types/booking/service-slot-type";
 import { PageResponse } from "@/types/page-response";
 import ConfirmModal from "@/components/confirm-modal";
+import { useMasterDataStore } from "@/app/store/master-data-store";
+import { useShallow } from "zustand/react/shallow";
 
 const PAGE_SIZE = 20;
 
@@ -53,8 +55,14 @@ export default function ManageServiceSlotsPage() {
 
   const [deleteLoading, setDeleteLoading] = useState(false);
   // Data states
-  const [services, setServices] = useState<ServiceDTO[]>([]);
-  const [locations, setLocations] = useState<LocationDTO[]>([]);
+
+  const { services, locations } = useMasterDataStore(
+    useShallow((state) => ({
+      services: state.services,
+      locations: state.locations,
+    })),
+  );
+
   const [pageData, setPageData] = useState<PageResponse<ServiceSlotDTO> | null>(null);
 
   // Local new slots (unsaved)
@@ -81,23 +89,6 @@ export default function ManageServiceSlotsPage() {
     else newExpanded.add(date);
     setExpandedDates(newExpanded);
   };
-
-  /* ================= LOAD INITIAL DATA ================= */
-  useEffect(() => {
-    const loadInitialData = async () => {
-      try {
-        const [servicesData, locationsData] = await Promise.all([serviceService.getAll(), locationService.getAll()]);
-
-        setServices(servicesData);
-        setLocations(locationsData);
-      } catch (error) {
-        console.log(error);
-        toast.error("Failed to load initial data");
-      }
-    };
-
-    loadInitialData();
-  }, []);
 
   /* ================= LOAD SLOTS FROM BACKEND ================= */
   const loadSlots = async (page: number = 1) => {

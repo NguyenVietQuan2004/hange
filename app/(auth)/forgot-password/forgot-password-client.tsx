@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { authService } from "@/services/auth/auth.service";
 import FooterLayout from "@/components/layout/footer-layout";
+import { CoreIcon } from "@/public/icons";
 
 export default function ForgotPasswordClientPage() {
   const [email, setEmail] = useState("");
@@ -32,7 +33,9 @@ export default function ForgotPasswordClientPage() {
     <FooterLayout>
       <div className=" flex flex-col mt-20 items-center justify-center px-4 bg-background text-foreground transition-colors">
         <div className="mb-6">
-          <Image src="/image/logo.png" alt="logo" width={48} height={48} className="w-12 h-12 rounded-full bg-card" />
+          {/* <Image src="/image/logo.png" alt="logo" width={48} height={48} className="w-12 h-12 rounded-full bg-card" /> */}
+
+          <CoreIcon width={50} height={42} />
         </div>
 
         <h1 className="text-xl font-semibold mb-2">Reset your password</h1>

@@ -1,4 +1,5 @@
 import "./globals.css";
+import "./animate.css";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
@@ -7,8 +8,12 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/hook/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import SocketProvider from "@/hook/socket-provider";
+import { CoreIcon } from "@/public/icons";
+import { MasterDataProvider } from "@/hook/master-data-provider";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+
+// app/layout.tsx
 
 const monaSans = localFont({
   src: [
@@ -36,7 +41,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           {" "}
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            <SocketProvider>{children}</SocketProvider>
+            <SocketProvider>
+              <MasterDataProvider />
+              {children}
+            </SocketProvider>
           </ThemeProvider>
         </AuthProvider>
 

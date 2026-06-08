@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hook/auth-provider";
-import { AppuleIcon, GoogleIcon } from "@/public/icons";
+import { AppuleIcon, CoreIcon, GoogleIcon } from "@/public/icons";
 import { authService } from "@/services/auth/auth.service";
 import FooterLayout from "@/components/layout/footer-layout";
 import { RESEND_VERIFICATION_ERROR_MESSAGE } from "@/const/auth/resend-verification-error";
@@ -82,7 +82,8 @@ export default function LoginClientPage() {
       <div className="flex p-4 justify-center bg-background text-foreground">
         <div className="w-full max-w-sm mt-20">
           <div className="flex justify-center mb-6">
-            <Image alt="" src="/image/logo.png" width={48} height={48} className="w-12 h-12 rounded-full bg-card" />
+            {/* <Image alt="" src="/image/logo.png" width={48} height={48} className="w-12 h-12 rounded-full bg-card" /> */}
+            <CoreIcon width={50} height={42} />
           </div>
 
           <h1 className="text-center text-xl font-bold mb-6">Sign in to your Hange</h1>

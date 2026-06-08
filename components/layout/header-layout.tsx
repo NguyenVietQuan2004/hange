@@ -8,7 +8,7 @@ function HeaderLayout({
   return (
     <div className="flex-1 flex flex-col">
       <Header />
-      <div className="flex-1 flex flex-col mt-4 md:mt-0">{children}</div>
+      <div className="flex-1 flex flex-col mt-4 md:mt-0 pt-[70px]">{children}</div>
     </div>
   );
 }

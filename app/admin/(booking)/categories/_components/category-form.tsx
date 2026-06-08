@@ -370,8 +370,6 @@ export default function CategoryForm({ mode, initialData }: Props) {
                   <div key={index} className="overflow-hidden rounded-2xl border border-border bg-card">
                     {/* IMAGE */}
                     <div className="group  relative aspect-video bg-muted">
-                      {/* <Image src={image.preview || "/image/default.png"} alt="" fill className="object-cover" /> */}
-
                       {image.preview ? (
                         <Image src={image.preview} alt="" fill className="object-cover" />
                       ) : (
@@ -379,25 +377,6 @@ export default function CategoryForm({ mode, initialData }: Props) {
                           <Images className="h-16 w-16 text-muted-foreground/60" />
                         </div>
                       )}
-
-                      {/* <label className="absolute inset-0 flex items-center justify-center">
-                        <div className="flex cursor-pointer items-center gap-2 rounded-xl bg-background/90 px-4 py-3 font-medium shadow-lg backdrop-blur">
-                          <Upload className="h-4 w-4" />
-                          Upload
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-
-                              if (!file) return;
-
-                              handleImageUpload(index, file);
-                            }}
-                          />
-                        </div>
-                      </label> */}
 
                       <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                         <label className="cursor-pointer">

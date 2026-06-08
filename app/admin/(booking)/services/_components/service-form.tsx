@@ -11,6 +11,8 @@ import { serviceService } from "@/services/booking/service.service";
 import { categoryService } from "@/services/booking/category.service";
 import { systemService } from "@/services/system.service";
 import ContentInput from "@/components/content-blog";
+import { useMasterDataStore } from "@/app/store/master-data-store";
+import { useShallow } from "zustand/react/shallow";
 type Props = { mode: "create" | "update"; initialData?: ServiceDTO };
 type ImageFormType = { url: string; description?: string; file?: File | null; preview?: string | null };
 type FormValues = {
@@ -25,7 +27,13 @@ type FormValues = {
 export default function ServiceForm({ mode, initialData }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState<CategoryDTO[]>([]);
+
+  const { categories } = useMasterDataStore(
+    useShallow((state) => ({
+      categories: state.categories,
+    })),
+  );
+
   const [imageForms, setImageForms] = useState<ImageFormType[]>(
     initialData?.images?.map((img) => ({ url: img.url, description: img.description, preview: img.url })) || [],
   );
@@ -47,9 +55,7 @@ export default function ServiceForm({ mode, initialData }: Props) {
       categoryId: initialData?.categoryId || 0,
     },
   });
-  useEffect(() => {
-    fetchCategories();
-  }, []);
+
   useEffect(() => {
     if (initialData) {
       reset({
@@ -63,15 +69,7 @@ export default function ServiceForm({ mode, initialData }: Props) {
       });
     }
   }, [initialData, reset]);
-  const fetchCategories = async () => {
-    try {
-      const data = await categoryService.getAll();
-      setCategories(data);
-    } catch (error) {
-      console.log(error);
-      toast.error("Cannot load categories");
-    }
-  };
+
   const addImage = () => {
     setImageForms((prev) => [...prev, { url: "", description: "", file: null, preview: null }]);
   };
@@ -338,8 +336,6 @@ export default function ServiceForm({ mode, initialData }: Props) {
                   <div key={index} className="overflow-hidden rounded-2xl border border-border bg-card">
                     {/* IMAGE */}
                     <div className="group  relative aspect-video bg-muted">
-                      {/* <Image src={image.preview || "/image/default.png"} alt="" fill className="object-cover" /> */}
-
                       {image.preview ? (
                         <Image src={image.preview} alt="" fill className="object-cover" />
                       ) : (
